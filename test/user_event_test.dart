@@ -9,64 +9,11 @@ import 'package:prototype_project/models/event_type.dart';
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user_event.dart';
-
-/// Initialize sqflite for test.
-void sqfliteTestInit() {
-  // Initialize ffi implementation
-  sqfliteFfiInit();
-  // Set global factory
-  databaseFactory = databaseFactoryFfi;
-}
-
-Future<Database> createDatabase() async {
-  Database db = await openDatabase(inMemoryDatabasePath); // creates a database within memory
-
-  await db.execute("""
-    CREATE TABLE carer(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      password TEXT
-    );
-
-    CREATE TABLE user (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT
-    );
-
-    CREATE TABLE carer_to_user (
-      carer_id INTEGER,
-      user_id INTEGER,
-      PRIMARY KEY (carer_id, user_id),
-      FOREIGN KEY (carer_id) REFERENCES carer(id),
-      FOREIGN KEY (user_id) REFERENCES user(id)
-    );
-
-    CREATE TABLE event_type (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT
-    );
-
-    CREATE TABLE user_event (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      event_type_id INTEGER,
-      title TEXT,
-      message TEXT,
-      is_all_day INT,
-      repeat_type INT,
-      reminder_time_unix INT,
-      event_detail_json TEXT,
-      FOREIGN KEY (user_id) REFERENCES user(id)
-      FOREIGN KEY (event_type_id) REFERENCES event_type(id)
-    );
-  """);
-
-  return db;
-}
+import 'package:prototype_project/context/carer_db.dart';
 
 Future<void> testCreatingEventType() async {
-  final Database db = await createDatabase();
-
+  final Database db = await CarerDb.create();
+  
   final int eventTypeId = await EventType.create("Appointment", db);
   final EventType? eventType = await EventType.getById(eventTypeId, db);
 
@@ -76,7 +23,7 @@ Future<void> testCreatingEventType() async {
 }
 
 Future<void> testCreatingUserEvent() async {
-  final Database db = await createDatabase();
+  final Database db = await CarerDb.create();
 
   final int userId = await User.create("Finley", db);
   final int eventTypeId = await EventType.create("Appointment", db);
@@ -105,7 +52,7 @@ Future<void> testCreatingUserEvent() async {
 }
 
 Future<void> testCreatingUserEventWithData() async {
-  final Database db = await createDatabase();
+  final Database db = await CarerDb.create();
 
   // create a temp user and a event type
   final int userId = await User.create("Finley", db);
@@ -145,8 +92,6 @@ Future<void> testCreatingUserEventWithData() async {
 }
 
 void main() {
-  sqfliteTestInit();
-
   test("Creating Event Type", testCreatingEventType);
   test("Creating User Event", testCreatingUserEvent);
   test("Creating User Event With Data", testCreatingUserEventWithData);
