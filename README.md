@@ -9,3 +9,8 @@ A new Flutter project.
 	2. Enter `git clone https://github.com/FinleyConway/prototype_project.git`
 	3. Enter `cd prototype_project && code .`
     4. Within the code terminal enter: `flutter run`
+
+## 🔒 Security & Privacy
+
+This app is a **prototype for care providers** and does not use or store any real patient data.  
+Please read our [Security Policy](./.github/SECURITY.md) for developer and usage guidelines.
