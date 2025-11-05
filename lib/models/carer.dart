@@ -2,10 +2,12 @@
 /// @Author: Finley Conway
 
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:crypto/crypto.dart';
 
 import 'package:prototype_project/models/carer_to_user.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
 import 'package:prototype_project/models/user.dart';
 
 class Carer {
@@ -31,13 +33,15 @@ class Carer {
     );
   }
 
+
+
   // Create a new Carer entity.
   static Future<int> create(String name, String password, Database database) async {
     return await database.insert(
       "carer", 
       {
         "name" : name,
-        "password" : password
+        "password" : sha256.convert(utf8.encode(password)).toString() // will probably turn this into a function soon
       },
       conflictAlgorithm: ConflictAlgorithm.replace
     );

@@ -1,6 +1,9 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -17,7 +20,7 @@ Future<void> testCreatingCarer() async {
   final int carerId = await Carer.create("Finley", "1234", db);
   final Carer? carer = await Carer.getById(carerId, db);
 
-  expect(carer, Carer(id: 1, name: "Finley", password: "1234"));
+  expect(carer, Carer(id: 1, name: "Finley", password: sha256.convert(utf8.encode("1234")).toString()));
 
   await db.close();
 }

@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   sqflite_common_ffi: ^2.3.6
   path: ^1.9.1
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
