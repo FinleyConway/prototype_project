@@ -33,8 +33,6 @@ class Carer {
     );
   }
 
-
-
   // Create a new Carer entity.
   static Future<int> create(String name, String password, Database database) async {
     return await database.insert(
@@ -77,13 +75,7 @@ class Carer {
   }
 
   @override
-  bool operator ==(Object other) {
-    // literally has the same problem as python...
-    if (other is! Carer) { 
-      return false;
-    }
-
-    // actual comparison
+  bool operator ==(covariant Carer other) {
     return id == other.id && name == other.name && password == other.password;
   }
 

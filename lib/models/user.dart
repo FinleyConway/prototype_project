@@ -46,13 +46,7 @@ class User {
   }
 
   @override
-  bool operator ==(Object other) {
-    // literally has the same problem as python...
-    if (other is! User) { 
-      return false;
-    }
-
-    // actual comparison
+  bool operator ==(covariant User other) {
     return id == other.id && name == other.name;
   }
 

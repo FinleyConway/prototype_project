@@ -49,13 +49,7 @@ class EventType {
   }
 
   @override
-  bool operator ==(Object other) {
-    // literally has the same problem as python...
-    if (other is! EventType) { 
-      return false;
-    }
-
-    // actual comparison
+  bool operator ==(covariant EventType other) {
     return id == other.id && name == other.name;
   }
 

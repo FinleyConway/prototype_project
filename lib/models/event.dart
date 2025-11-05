@@ -25,11 +25,7 @@ class Event {
   });
 
   @override
-  bool operator ==(Object other) {
-    if (other is! Event) { 
-      return false;
-    }
-
+  bool operator ==(covariant Event other) {
     return 
       title == other.title &&
       message == other.message &&

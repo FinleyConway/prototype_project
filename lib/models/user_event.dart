@@ -80,11 +80,7 @@ class UserEvent {
   }
 
   @override
-  bool operator ==(Object other) {
-    if (other is! UserEvent) { 
-      return false;
-    }
-
+  bool operator ==(covariant UserEvent other) {
     return 
       id == other.id && 
       userId == other.userId &&
