@@ -43,3 +43,16 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment and secret files
+# -------------------------------------------------------
+# These entries prevent any sensitive information
+# such as API keys, tokens, certificates, or local configs
+# from being uploaded to GitHub.
+# Keep your secrets only in local .env files.
+# -------------------------------------------------------
+.env
+.env.*
+*.key
+*.pem
+*.json
