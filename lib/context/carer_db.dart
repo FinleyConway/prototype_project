@@ -31,6 +31,7 @@ class CarerDb {
     await database.execute(_createCarerToUserTable());
     await database.execute(_createEventTypeTable());
     await database.execute(_createUserEventTable());
+    await database.execute(_createSymptomLogTable());
   }
 
   static String _createCarerTable() {
@@ -85,8 +86,21 @@ class CarerDb {
         repeat_type INT,
         reminder_time_unix INT,
         event_detail_json TEXT,
-        FOREIGN KEY (user_id) REFERENCES user(id)
+        FOREIGN KEY (user_id) REFERENCES user(id),
         FOREIGN KEY (event_type_id) REFERENCES event_type(id)
+      );
+    """;
+  }
+
+  static String _createSymptomLogTable() {
+    return """
+      CREATE TABLE symptom_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        symptom_type INT,
+        notes TEXT,
+        timestamp_unix INT,
+        FOREIGN KEY (user_id) REFERENCES user(id)
       );
     """;
   }

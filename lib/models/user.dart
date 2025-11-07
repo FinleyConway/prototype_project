@@ -1,6 +1,7 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
+import 'package:prototype_project/models/symptom_log.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:prototype_project/models/user_event.dart';
@@ -51,6 +52,14 @@ class User {
 
   Future<UserEvent> assignEvent(int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) {
     return UserEvent.create(id, eventTypeId, event, database);
+  }
+
+  Future<List<SymptomLog>> getAllLoggedSymptoms(SymptomOrder order, SymptomSortBy sort, Database database) {
+    return SymptomLog.getAll(id, order, sort, database);
+  }
+
+  Future<SymptomLog> assignSymptomLog(Symptom symptom, String notes, DateTime timestamp, Database database) {
+    return SymptomLog.create(id, symptom, notes, timestamp, database);
   }
 
   @override
