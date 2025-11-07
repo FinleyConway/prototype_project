@@ -21,28 +21,18 @@ class Carer {
     required this.password
   });
 
-  Map<String, Object?> toMap() {
-    return { "id" : id, "name" : name, "password" : password };
-  }
-
-  static Carer fromMap(Map<String, Object?> map) {
-    return Carer(
-      id: map["id"] as int, 
-      name: map["name"] as String, 
-      password: map["password"] as String
-    );
-  }
-
   // Create a new Carer entity.
-  static Future<int> create(String name, String password, Database database) async {
-    return await database.insert(
+  static Future<Carer> create(String name, String password, Database database) async {
+    final String hashedPassword = sha256.convert(utf8.encode(password)).toString() ;
+    final int id = await database.insert(
       "carer", 
       {
         "name" : name,
-        "password" : sha256.convert(utf8.encode(password)).toString() // will probably turn this into a function soon
+        "password" : hashedPassword
       },
-      conflictAlgorithm: ConflictAlgorithm.replace
     );
+
+    return Carer(id: id, name: name, password: hashedPassword);
   }
   
   // Get the Carer entity by id.
@@ -53,25 +43,33 @@ class Carer {
       whereArgs: [carerId]
     );
 
-    return result.isNotEmpty ? fromMap(result.first) : null;
+    return result.isNotEmpty ? _fromMap(result.first) : null;
   }
 
   // Assign User to Carer by id.
-  static Future<void> assignUser(int carerId, int userId, Database database) async {
-    CarerToUser.assignCarerToUser(carerId, userId, database);
+  Future<void> assignUser(int userId, Database database) async {
+    CarerToUser.assignCarerToUser(id, userId, database);
   }
 
   // Get all Users assigned to Carer by id.
-  static Future<List<User>> getAllUsers(int carerId, Database database) async {
+  Future<List<User>> getAllUsers(Database database) async {
     final result = await database.rawQuery("""
       SELECT user.id, user.name
       FROM user
       INNER JOIN carer_to_user ON user.id = carer_to_user.user_id
       WHERE carer_to_user.carer_id = ?
-    """, [carerId]);
+    """, [id]);
 
     // uses the map iterator to go through each element map it into a user object
     return result.map((row) => User.fromMap(row)).toList();
+  }
+
+  static Carer _fromMap(Map<String, Object?> map) {
+    return Carer(
+      id: map["id"] as int, 
+      name: map["name"] as String, 
+      password: map["password"] as String
+    );
   }
 
   @override

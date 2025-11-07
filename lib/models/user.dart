@@ -3,6 +3,9 @@
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'package:prototype_project/models/user_event.dart';
+import 'package:prototype_project/models/event.dart';
+
 class User {
   final int id;
   final String name;
@@ -12,10 +15,6 @@ class User {
     required this.name
   });
 
-  Map<String, Object?> toMap() {
-    return { "id" : id, "name" : name };
-  }
-
   static User fromMap(Map<String, Object?> map) {
     return User(
       id: map["id"] as int, 
@@ -24,14 +23,15 @@ class User {
   }
 
   // Create a new User entity.
-  static Future<int> create(String name, Database database) async {
-    return await database.insert(
+  static Future<User> create(String name, Database database) async {
+    final int id = await database.insert(
       "user",
       {
         "name" : name
       },
-      conflictAlgorithm: ConflictAlgorithm.replace
     );
+
+    return User(id: id, name: name);
   }
 
   // Get the User entity by id.
@@ -43,6 +43,14 @@ class User {
     );
 
     return result.isNotEmpty ? fromMap(result.first) : null;
+  }
+
+  Future<List<UserEvent>> getAllEvents(Database database) {
+    return UserEvent.getByUserId(id, database);
+  }
+
+  Future<UserEvent> assignEvent(int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) {
+    return UserEvent.create(id, eventTypeId, event, database);
   }
 
   @override

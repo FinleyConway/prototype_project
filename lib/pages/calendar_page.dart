@@ -47,9 +47,9 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   Future<void> _onUserEventFetch() async {
     // temp database setup
     Database database = await CarerDb.create();
-    final int userId = await User.create("Bob", database);
+    final User user = await User.create("Bob", database);
 
-    await UserEvent.create(userId, 1, Event(
+    await UserEvent.create(user.id, 1, Event(
       title: "Test",
       message: "A Message",
       isAllDay: false,
@@ -60,7 +60,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     //  -- end of temp
 
     // get all events for user and arranged them into a map
-    final List<UserEvent> events = await UserEvent.getByUserId(userId, database);
+    final List<UserEvent> events = await UserEvent.getByUserId(user.id, database);
     Map<DateTime, List<Event>> fetchedEvents = {};
 
     for (final UserEvent userEvent in events) {
