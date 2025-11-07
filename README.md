@@ -10,7 +10,11 @@ A new Flutter project.
 	3. Enter `cd prototype_project && code .`
     4. Within the code terminal enter: `flutter run`
 
-## 🔒 Security & Privacy
+## Security & Privacy
 
 This app is a **prototype for care providers** and does not use or store any real patient data.  
-Please read our [Security Policy](./.github/SECURITY.md) for developer and usage guidelines.
+All security measures follow secure coding practices and comply with basic GDPR principles.
+
+-  [Security Policy](./.github/SECURITY.md) – Developer and usage guidelines.  
+-  [Terms & Privacy Policy](./.github/terms_privacy.md) – User data handling, consent, and disclaimer information.
+
