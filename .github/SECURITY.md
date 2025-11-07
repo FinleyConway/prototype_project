@@ -28,7 +28,7 @@ Review permissions before adding new ones (e.g., camera, location, etc.).
 
 ## Reporting Issues
 
-- If you notice a security issue or bug:
+If you notice a security issue or bug:
 
 - Do not post it publicly.
 
