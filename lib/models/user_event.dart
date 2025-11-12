@@ -4,8 +4,9 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:prototype_project/models/event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'package:prototype_project/models/event.dart';
 
 class UserEvent {
   final int id;
@@ -22,7 +23,49 @@ class UserEvent {
     required this.eventDetails
   });
 
-  static UserEvent fromMap(Map<String, Object?> map) {
+  // Create a User Event entity.
+  static Future<UserEvent> create(int userId, int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) async {
+    final int id = await database.insert(
+      "user_event",
+      {
+        "user_id" : userId,
+        "title" : event.title,
+        "message" : event.message,
+        "is_all_day" : event.isAllDay ? 1 : 0, // sqlite doesnt have bool
+        "event_type_id" : eventTypeId,
+        "repeat_type" : event.repeatType.index,
+        "reminder_time_unix" : _getUnixTime(event.reminderTime),
+        "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
+      },
+    );
+
+    return UserEvent(id: id, userId: userId, eventTypeId: eventTypeId, event: event, eventDetails: eventDetails);
+  }
+
+  // Get the User Event entity from user id.
+  static Future<List<UserEvent>> getByUserId(int userId, Database database) async {
+    final result = await database.query(
+      "user_event",
+      where: "user_id = ?",
+      whereArgs: [userId]
+    );
+
+    return result.map((row) => UserEvent._fromMap(row)).toList();
+  }
+
+  static int _getUnixTime(DateTime time) {
+    return time.toUtc().millisecondsSinceEpoch;
+  }
+
+  static DateTime _getDateFromUnix(int timestamp) {
+    return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
+  }
+
+  static Map<String, dynamic>? _parseJson(Object? jsonObject) {
+    return jsonObject != null ? jsonDecode(jsonObject as String) as Map<String, dynamic> : null;
+  }
+
+  static UserEvent _fromMap(Map<String, Object?> map) {
     return UserEvent(
       id: map["id"] as int, 
       userId: map["user_id"] as int,
@@ -36,47 +79,6 @@ class UserEvent {
       ),
       eventDetails: _parseJson(map["event_detail_json"]),
     );
-  }
-
-  // Create a User Event entity.
-  static Future<int> create(int userId, int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) async {
-    return await database.insert(
-      "user_event",
-      {
-        "user_id" : userId,
-        "title" : event.title,
-        "message" : event.message,
-        "is_all_day" : event.isAllDay ? 1 : 0, // sqlite doesnt have bool
-        "event_type_id" : eventTypeId,
-        "repeat_type" : event.repeatType.index,
-        "reminder_time_unix" : _getUnixTime(event.reminderTime),
-        "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace
-    );
-  }
-
-  // Get the User Event entity from user id.
-  static Future<List<UserEvent>> getByUserId(int userId, Database database) async {
-    final result = await database.query(
-      "user_event",
-      where: "user_id = ?",
-      whereArgs: [userId]
-    );
-
-    return result.map((row) => UserEvent.fromMap(row)).toList();
-  }
-
-  static int _getUnixTime(DateTime time) {
-    return time.toUtc().millisecondsSinceEpoch;
-  }
-
-  static DateTime _getDateFromUnix(int timestamp) {
-    return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
-  }
-
-  static Map<String, dynamic>? _parseJson(Object? jsonObject) {
-    return jsonObject != null ? jsonDecode(jsonObject as String) as Map<String, dynamic> : null;
   }
 
   @override

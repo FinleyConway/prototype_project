@@ -1,9 +1,6 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'dart:convert';
-
-import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -17,10 +14,10 @@ import 'package:prototype_project/models/user.dart';
 Future<void> testCreatingCarer() async {
   final Database db = await CarerDb.create();
 
-  final int carerId = await Carer.create("Finley", "1234", db);
-  final Carer? carer = await Carer.getById(carerId, db);
+  final Carer newCarer = await Carer.create("Finley", "1234", db);
+  final Carer? carer = await Carer.getById(newCarer.id, db);
 
-  expect(carer, Carer(id: 1, name: "Finley", password: sha256.convert(utf8.encode("1234")).toString()));
+  expect(carer, newCarer);
 
   await db.close();
 }
@@ -28,10 +25,10 @@ Future<void> testCreatingCarer() async {
 Future<void> testCreatingUser() async {
   final Database db = await CarerDb.create();
 
-  final int userId = await User.create("Finley", db);
-  final User? user = await User.get(userId, db);
+  final User newUser = await User.create("Finley", db);
+  final User? user = await User.get(newUser.id, db);
 
-  expect(user, User(id: 1, name: "Finley"));
+  expect(user, newUser);
 
   await db.close();
 }
@@ -39,26 +36,23 @@ Future<void> testCreatingUser() async {
 Future<void> testCarerToUsers() async {
   final Database db = await CarerDb.create();
 
-  final int carerId = await Carer.create("Finley", "1234", db); // create a carer
-  List<int> users = []; 
+  final Carer carer = await Carer.create("Finley", "1234", db); 
+  List<User> users = []; 
 
   // create and assign users to carer
   for (int i = 0; i < 10; i++) {
-    final int userId = await User.create("Bob", db);
+    final User user = await User.create("Bob", db);
 
-    users.add(userId);
-
-    Carer.assignUser(carerId, userId, db);
+    users.add(user);
+    carer.assignUser(user.id, db);
   }
 
   // get all protential users assigned to carer
-  final List<User> potentialUsers = await Carer.getAllUsers(carerId, db);
+  final List<User> potentialUsers = await carer.getAllUsers(db);
 
   // check if they are assigned to carer
   for (int i = 0; i < 10; i++) {
-    final User? user = await User.get(users[i], db);
-
-    expect(potentialUsers, contains(user));
+    expect(potentialUsers, contains(users[i]));
   }
 
   await db.close();

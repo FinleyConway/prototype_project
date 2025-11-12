@@ -37,6 +37,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.6
   path: ^1.9.1
   crypto: ^3.0.7
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:

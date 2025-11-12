@@ -12,13 +12,6 @@ class EventType {
     required this.name
   });
 
-  static EventType fromMap(Map<String, Object?> map) {
-    return EventType(
-      id: map["id"] as int, 
-      name: map["name"] as String, 
-    );
-  }
-
   // Create a new Event Type entity.
   static Future<int> create(String eventName, Database database) async {
     return await database.insert(
@@ -38,14 +31,21 @@ class EventType {
       whereArgs: [eventId]
     );
 
-    return result.isNotEmpty ? fromMap(result.first) : null;
+    return result.isNotEmpty ? _fromMap(result.first) : null;
   }
 
   // Get all Event Type entitles.
   static Future<List<EventType>> getAll(Database database) async {
     final result = await database.query("event_type");
 
-    return result.map((row) => EventType.fromMap(row)).toList();
+    return result.map((row) => EventType._fromMap(row)).toList();
+  }
+
+  static EventType _fromMap(Map<String, Object?> map) {
+    return EventType(
+      id: map["id"] as int, 
+      name: map["name"] as String, 
+    );
   }
 
   @override

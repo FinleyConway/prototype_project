@@ -25,9 +25,8 @@ Future<void> testCreatingEventType() async {
 Future<void> testCreatingUserEvent() async {
   final Database db = await CarerDb.create();
 
-  final int userId = await User.create("Finley", db);
+  final User user = await User.create("Finley", db);
   final int eventTypeId = await EventType.create("Appointment", db);
-
   final Event event = Event(
     title: "Wake up", 
     message: "Blah blah blah", 
@@ -36,17 +35,11 @@ Future<void> testCreatingUserEvent() async {
     reminderTime: DateTime(2025, 4, 7, 0)
   );
 
-  await UserEvent.create(userId, eventTypeId, event, db);
-  final List<UserEvent?> protentialEvent = await UserEvent.getByUserId(userId, db);
+  final UserEvent createdUserEvent = await user.assignEvent(eventTypeId, event, db);
+  final List<UserEvent?> protentialEvent = await user.getAllEvents(db);
 
   expect(protentialEvent.length, 1);
-  expect(protentialEvent.first, UserEvent(
-    id: 1, 
-    userId: userId, 
-    eventTypeId: eventTypeId, 
-    event: event,
-    eventDetails: null
-  ));
+  expect(protentialEvent.first, createdUserEvent);
 
   await db.close();
 }
@@ -54,10 +47,8 @@ Future<void> testCreatingUserEvent() async {
 Future<void> testCreatingUserEventWithData() async {
   final Database db = await CarerDb.create();
 
-  // create a temp user and a event type
-  final int userId = await User.create("Finley", db);
+  final User user = await User.create("Finley", db);
   final int eventTypeId = await EventType.create("Appointment", db);
-
   final Event event = Event(
     title: "Wake up", 
     message: "Blah blah blah", 
@@ -67,26 +58,15 @@ Future<void> testCreatingUserEventWithData() async {
   );
 
   // create an user event and search for it by user id
-  await UserEvent.create(userId, eventTypeId, event, db, {
+  final UserEvent createdUserEvent = await user.assignEvent(eventTypeId, event, db, {
     "Medication" : "Healing Stimpak",
     "Dosage" : "200ml",
     "HasBeenTaken" : true
   });
-  final List<UserEvent?> protentialEvent = await UserEvent.getByUserId(userId, db);
+  final List<UserEvent?> protentialEvent = await user.getAllEvents(db);
 
-  // check if it actually matches
   expect(protentialEvent.length, 1);
-  expect(protentialEvent.first, UserEvent(
-    id: 1, 
-    userId: userId, 
-    eventTypeId: eventTypeId, 
-    event: event,
-    eventDetails: {
-      "Medication" : "Healing Stimpak",
-      "Dosage" : "200ml",
-      "HasBeenTaken" : true
-    }
-  ));
+  expect(protentialEvent.first, createdUserEvent);
 
   await db.close();
 }
