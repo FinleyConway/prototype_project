@@ -2,7 +2,9 @@
 /// @Author: Finley Conway
 
 import 'package:prototype_project/models/symptom_log.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/user_event.dart';
 import 'package:prototype_project/models/event.dart';

@@ -1,7 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import 'pages/home_page.dart';
 
 void main() {
+  // init desktop only database setup
+  if (!(Platform.isAndroid || Platform.isIOS)) {
+    // Initialize ffi implementation
+    sqfliteFfiInit();
+    // Set global factory
+    databaseFactory = databaseFactoryFfi;
+  }
+
   runApp(const MyApp());
 }
 

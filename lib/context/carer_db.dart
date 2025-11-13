@@ -1,21 +1,12 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'dart:io';
-
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class CarerDb {
   static Future<Database> create([String? path]) async
   {
-    // init desktop only database setup
-    if (!(Platform.isAndroid || Platform.isIOS)) {
-      // Initialize ffi implementation
-      sqfliteFfiInit();
-      // Set global factory
-      databaseFactory = databaseFactoryFfi;
-    }
-
     Database db = await openDatabase(
       path ?? inMemoryDatabasePath, // creates a database within memory or by specific path
       version: 1,
@@ -27,6 +18,7 @@ class CarerDb {
 
   static Future<void> _onCreateTables(Database database, int version) async {
     await database.execute(_createCarerTable());
+    await database.execute(_createOtpCodesTable());
     await database.execute(_createUserTable());
     await database.execute(_createCarerToUserTable());
     await database.execute(_createEventTypeTable());
@@ -39,7 +31,21 @@ class CarerDb {
       CREATE TABLE carer(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        password TEXT
+        email TEXT,
+        username TEXT,
+        password TEXT,
+        salt TEXT,
+        terms_accepted INTEGER DEFAULT 0
+      );
+    """;
+  }
+
+  static String _createOtpCodesTable() {
+    return """
+      CREATE TABLE otp_codes(
+        email TEXT PRIMARY KEY,
+        code TEXT,
+        expires_at INTEGER
       );
     """;
   }

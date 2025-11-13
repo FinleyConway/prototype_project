@@ -1,11 +1,12 @@
 /// @Created on: 4/11/25
-/// @Author: Finley Conway
+/// @Author: Bodoor Albassam, Finley Conway
 
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:crypto/crypto.dart';
+import 'package:prototype_project/utils/auth.dart';
+
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/carer_to_user.dart';
 import 'package:prototype_project/models/user.dart';
@@ -13,26 +14,38 @@ import 'package:prototype_project/models/user.dart';
 class Carer {
   final int id;
   final String name;
+  final String email;
+  final String username;
   final String password;
+  final String salt;
+  final bool termsAccepted;
 
   Carer({
     required this.id,
     required this.name,
-    required this.password
+    required this.email,
+    required this.username,
+    required this.password,
+    required this.salt,
+    required this.termsAccepted
   });
 
   // Create a new Carer entity.
-  static Future<Carer> create(String name, String password, Database database) async {
-    final String hashedPassword = sha256.convert(utf8.encode(password)).toString() ;
+  static Future<Carer> create(String name, String email, String username, String password, bool termsAccepted, Database database) async {
+    final HashString hash = Auth.createHashString(password);
     final int id = await database.insert(
       "carer", 
       {
         "name" : name,
-        "password" : hashedPassword
+        "email" : email,
+        "username" : username,
+        "password" : hash.hashValue,
+        "salt" : hash.salt,
+        "terms_accepted" : termsAccepted ? 1 : 0
       },
     );
 
-    return Carer(id: id, name: name, password: hashedPassword);
+    return Carer(id: id, name: name, email: email, username: username, password: hash.hashValue, salt: hash.salt, termsAccepted: termsAccepted);
   }
   
   // Get the Carer entity by id.
@@ -41,6 +54,28 @@ class Carer {
       "carer",
       where: "id = ?",
       whereArgs: [carerId]
+    );
+
+    return result.isNotEmpty ? _fromMap(result.first) : null;
+  }
+
+  // Get the Carer entity by username.
+  static Future<Carer?> getByUsername(String carerUsername, Database database) async {
+    final result = await database.query(
+      "carer",
+      where: "username = ?",
+      whereArgs: [carerUsername]
+    );
+
+    return result.isNotEmpty ? _fromMap(result.first) : null;
+  }
+
+  // Get the Carer entity by username.
+  static Future<Carer?> getByEmail(String carerEmail, Database database) async {
+    final result = await database.query(
+      "carer",
+      where: "email = ?",
+      whereArgs: [carerEmail]
     );
 
     return result.isNotEmpty ? _fromMap(result.first) : null;
@@ -66,17 +101,37 @@ class Carer {
 
   static Carer _fromMap(Map<String, Object?> map) {
     return Carer(
-      id: map["id"] as int, 
-      name: map["name"] as String, 
-      password: map["password"] as String
+      id: map["id"] as int,
+      name: map["name"] as String,
+      email: map["email"] as String,
+      username: map["username"] as String,
+      password: map["password"] as String,
+      salt: map["salt"] as String,
+      termsAccepted: (map["terms_accepted"] as int) == 1, 
     );
   }
 
+  
   @override
   bool operator ==(covariant Carer other) {
-    return id == other.id && name == other.name && password == other.password;
+    return 
+      id == other.id &&
+      name == other.name &&
+      email == other.email &&
+      username == other.username &&
+      password == other.password &&
+      salt == other.salt &&
+      termsAccepted == other.termsAccepted;
   }
 
   @override
-  int get hashCode => Object.hash(id, name, password);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    email,
+    username,
+    password,
+    salt,
+    termsAccepted,
+  );
 }

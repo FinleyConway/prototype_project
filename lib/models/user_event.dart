@@ -4,7 +4,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/event.dart';
 
