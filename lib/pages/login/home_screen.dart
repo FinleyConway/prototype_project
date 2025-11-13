@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../Components/button.dart';
+import '../../components/button.dart';
 import 'theme.dart';
 import 'login.dart';
 import 'signup.dart';

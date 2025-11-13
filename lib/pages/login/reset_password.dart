@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../Components/button.dart';
-import '../../Components/text_field.dart';
+import '../../components/button.dart';
+import '../../components/text_field.dart';
 import 'theme.dart';
 import 'validators.dart';
-import 'auth_repository.dart';
+import '../../Views/Auth/auth_repository.dart';
 
 /// Step 3: set a new strong password after OTP verification.
 class ResetPasswordScreen extends StatefulWidget {

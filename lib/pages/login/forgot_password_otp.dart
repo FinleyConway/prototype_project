@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../Components/button.dart';
+import '../../components/button.dart';
 import 'theme.dart';
-import 'auth_repository.dart';
+import '../../Views/Auth/auth_repository.dart';
 import 'reset_password.dart';
 
 /// Step 2: user types the OTP received (demo)

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../Components/button.dart';
+import '../../components/button.dart';
 import 'theme.dart';
 import 'validators.dart';
-import 'auth_repository.dart';
+import '../../Views/Auth/auth_repository.dart';
 import 'forgot_password_otp.dart';
 
 /// Step 1 in reset flow: user enters email, we generate OTP (demo)

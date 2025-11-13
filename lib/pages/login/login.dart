@@ -1,11 +1,11 @@
 import 'package:carepanion/Views/Auth/home_screen.dart';
 import 'package:flutter/material.dart';
-import '../../Components/button.dart';
+import '../../components/button.dart';
 import 'validators.dart';
-import 'auth_repository.dart';
+import '../../Views/Auth/auth_repository.dart';
 import 'forgot_password_email.dart';
 import 'package:carepanion/Views/Auth/theme.dart';
-import '../../Components/text_field.dart';
+import '../../components/text_field.dart';
 
 /// Sign-in screen: accepts either username or email + password
 /// and validates against stored salted+hashed credentials.
