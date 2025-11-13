@@ -1,7 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:window_size/window_size.dart';
+
 import 'pages/home_page.dart';
 
 void main() {
+  // create a phone like experience on the desktop
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    // based on the google pixel 6 pro scaled down
+    const double sizeX = 1440 / 4;
+    const double sizeY = 3120 / 4;
+
+    setWindowMaxSize(const Size(sizeX, sizeY));
+    setWindowMinSize(const Size(sizeX, sizeY));
+  }
+
   runApp(const MyApp());
 }
 
