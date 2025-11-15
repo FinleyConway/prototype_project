@@ -1,13 +1,20 @@
+/// @Created on: 13/11/25
+/// @Author: Bodoor Albassam
+
 import 'package:flutter/material.dart';
-import '../../components/button.dart';
-import 'theme.dart';
-import 'validators.dart';
-import '../../Views/Auth/auth_repository.dart';
-import 'forgot_password_otp.dart';
+import 'package:prototype_project/components/button.dart';
+import 'package:prototype_project/models/carer.dart';
+import 'package:prototype_project/pages/login/forgot_password_otp.dart';
+import 'package:prototype_project/pages/login/theme.dart';
+import 'package:prototype_project/pages/login/validators.dart';
+import 'package:prototype_project/utils/auth.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Step 1 in reset flow: user enters email, we generate OTP (demo)
 class ForgotPasswordEmailScreen extends StatefulWidget {
-  const ForgotPasswordEmailScreen({super.key});
+  final Database database;
+
+  const ForgotPasswordEmailScreen({super.key, required this.database});
 
   @override
   State<ForgotPasswordEmailScreen> createState() => _ForgotPasswordEmailScreenState();
@@ -47,15 +54,15 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                 label: 'Send OTP',
                 onTap: () async {
                   if (!formKey.currentState!.validate()) return;
-                  final exists = await AuthRepository.emailExists(emailCtrl.text.trim());
-                  if (!exists) {
+                  final Carer? exists = await Carer.getByEmail(emailCtrl.text.trim(), widget.database);
+                  if (exists == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Email not found')),
                     );
                     return;
                   }
                   // Demo only: OTP appears as a SnackBar.
-                  final code = await AuthRepository.generateOtpFor(emailCtrl.text.trim());
+                  final code = await Auth.generateOtpFor(emailCtrl.text.trim(), widget.database);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('OTP (demo): $code')),
                   );
@@ -63,7 +70,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ForgotPasswordOTPScreen(email: emailCtrl.text.trim()),
+                      builder: (_) => ForgotPasswordOTPScreen(email: emailCtrl.text.trim(), database: widget.database),
                     ),
                   );
                 },

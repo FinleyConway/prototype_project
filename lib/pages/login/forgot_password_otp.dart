@@ -1,13 +1,19 @@
+/// @Created on: 13/11/25
+/// @Author: Bodoor Albassam
+
 import 'package:flutter/material.dart';
-import '../../components/button.dart';
-import 'theme.dart';
-import '../../Views/Auth/auth_repository.dart';
-import 'reset_password.dart';
+import 'package:prototype_project/components/button.dart';
+import 'package:prototype_project/pages/login/reset_password.dart';
+import 'package:prototype_project/pages/login/theme.dart';
+import 'package:prototype_project/utils/auth.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Step 2: user types the OTP received (demo)
 class ForgotPasswordOTPScreen extends StatefulWidget {
+  final Database database;
   final String email;
-  const ForgotPasswordOTPScreen({super.key, required this.email});
+
+  const ForgotPasswordOTPScreen({super.key, required this.email, required this.database});
 
   @override
   State<ForgotPasswordOTPScreen> createState() => _ForgotPasswordOTPScreenState();
@@ -39,7 +45,7 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
             AppButton(
               label: 'Verify',
               onTap: () async {
-                final ok = await AuthRepository.verifyOtp(widget.email, codeCtrl.text.trim());
+                final ok = await Auth.verifyOtp(widget.email, codeCtrl.text.trim(), widget.database);
                 if (!ok) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Invalid/expired code')),
@@ -50,7 +56,7 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ResetPasswordScreen(email: widget.email),
+                    builder: (_) => ResetPasswordScreen(email: widget.email, database: widget.database),
                   ),
                 );
               },

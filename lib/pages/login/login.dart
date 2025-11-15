@@ -1,16 +1,24 @@
-import 'package:carepanion/Views/Auth/home_screen.dart';
+/// @Created on: 13/11/25
+/// @Author: Bodoor Albassam
+
 import 'package:flutter/material.dart';
-import '../../components/button.dart';
-import 'validators.dart';
-import '../../Views/Auth/auth_repository.dart';
-import 'forgot_password_email.dart';
-import 'package:carepanion/Views/Auth/theme.dart';
-import '../../components/text_field.dart';
+import 'package:prototype_project/components/button.dart';
+import 'package:prototype_project/components/text_field.dart';
+import 'package:prototype_project/pages/home_page.dart';
+import 'package:prototype_project/pages/login/forgot_password_email.dart';
+import 'package:prototype_project/pages/login/signup.dart';
+import 'package:prototype_project/pages/login/theme.dart';
+import 'package:prototype_project/pages/login/validators.dart';
+import 'package:prototype_project/utils/auth.dart';
+
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 /// Sign-in screen: accepts either username or email + password
 /// and validates against stored salted+hashed credentials.
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final Database database;
+
+  const LoginScreen({super.key, required this.database});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -29,15 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF3E7C75)),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -73,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const ForgotPasswordEmailScreen()),
+                        MaterialPageRoute(builder: (_) => ForgotPasswordEmailScreen(database: widget.database)),
                       );
                     },
                     child: const Text('Forgot password?'),
@@ -85,15 +84,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () async {
                     if (!formKey.currentState!.validate()) return;
                     setState(() => loading = true);
-                    final user = await AuthRepository.checkCredentials(
+                    final user = await Auth.checkCredentials(
                       usernameOrEmailController.text.trim(),
                       passwordController.text,
+                      widget.database
                     );
                     setState(() => loading = false);
                     if (!mounted) return;
                     if (user != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Welcome, ${user.username}!')),
+                      );
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomePage()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,7 +112,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     const Text("Don’t have an account? "),
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/signup'),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => SignUpScreen(database: widget.database))
+                        );
+                      },
                       child: const Text(
                         'Sign Up here',
                         style: TextStyle(fontWeight: FontWeight.bold, color: kText),

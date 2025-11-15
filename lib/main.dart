@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:prototype_project/context/carer_db.dart';
+import 'package:prototype_project/pages/login/login.dart'
+;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'pages/home_page.dart';
-
-void main() {
+void main() async {
   // init desktop only database setup
   if (!(Platform.isAndroid || Platform.isIOS)) {
     // Initialize ffi implementation
@@ -14,11 +15,15 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   }
 
-  runApp(const MyApp());
+  Database database = await CarerDb.create();  
+
+  runApp(MyApp(database: database));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Database database;
+
+  const MyApp({super.key, required this.database});
 
   // This widget is the root of your application.
   @override
@@ -43,7 +48,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: const HomePage(),
+      home: LoginScreen(database: database),
     );
   }
 }

@@ -1,14 +1,21 @@
+/// @Created on: 13/11/25
+/// @Author: Bodoor Albassam
+
 import 'package:flutter/material.dart';
-import '../../components/button.dart';
-import '../../components/text_field.dart';
-import 'theme.dart';
-import 'validators.dart';
-import '../../Views/Auth/auth_repository.dart';
+import 'package:prototype_project/components/button.dart';
+import 'package:prototype_project/components/text_field.dart';
+import 'package:prototype_project/pages/login/theme.dart';
+import 'package:prototype_project/pages/login/validators.dart';
+import 'package:prototype_project/utils/auth.dart';
+
+import 'package:sqflite/sqflite.dart';
 
 /// Step 3: set a new strong password after OTP verification.
 class ResetPasswordScreen extends StatefulWidget {
+  final Database database;
   final String email;
-  const ResetPasswordScreen({super.key, required this.email});
+
+  const ResetPasswordScreen({super.key, required this.email, required this.database});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -56,7 +63,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 label: 'Update Password',
                 onTap: () async {
                   if (!formKey.currentState!.validate()) return;
-                  await AuthRepository.updatePasswordByEmail(widget.email, p2.text);
+                  await Auth.updatePasswordByEmail(widget.email, p2.text, widget.database);
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Password reset successful')),

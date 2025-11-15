@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../components/button.dart';
-import '../../components/text_field.dart';
-import 'theme.dart';
-import 'validators.dart';
-import '../../Views/Auth/auth_repository.dart';
-import 'terms_page.dart';
+import 'package:prototype_project/components/button.dart';
+import 'package:prototype_project/components/text_field.dart';
+import 'package:prototype_project/models/carer.dart';
+import 'package:prototype_project/pages/login/terms_page.dart';
+import 'package:prototype_project/pages/login/theme.dart';
+import 'package:prototype_project/pages/login/validators.dart';
+import 'package:prototype_project/utils/auth.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Registration with:
 /// - Full name (>= 6)
@@ -13,7 +15,9 @@ import 'terms_page.dart';
 /// - Strong password policy + confirmation
 /// - Terms & Privacy checkbox linking to local HTML
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  final Database database;
+
+  const SignUpScreen({super.key, required this.database});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -37,10 +41,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       checkingUser = true;
       usernameError = null;
     });
-    final ok = await AuthRepository.usernameAvailable(v.trim());
+    final ok = await Carer.getByUsername(v.trim(), widget.database);
     setState(() {
       checkingUser = false;
-      usernameError = ok ? null : 'Username already taken';
+      usernameError = ok == null ? null : 'Username already taken';
     });
   }
 
@@ -184,17 +188,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return;
                     }
 
-                    final err = await AuthRepository.signUp(
-                      fullName: fullNameController.text.trim(),
-                      email: emailController.text.trim().toLowerCase(),
-                      username: usernameController.text.trim(),
-                      password: passwordController.text,
-                      termsAccepted: true,
+                    final err = await Auth.signUp(
+                      fullNameController.text.trim(),
+                      emailController.text.trim().toLowerCase(),
+                      usernameController.text.trim(),
+                      passwordController.text,
+                      true,
+                      widget.database
                     );
 
                     if (!mounted) return;
-                    if (err != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+                    if (!err.success) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.error)));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Account created. You can sign in now.')),
