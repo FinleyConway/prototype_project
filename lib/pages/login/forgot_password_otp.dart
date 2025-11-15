@@ -6,7 +6,9 @@ import 'package:prototype_project/components/button.dart';
 import 'package:prototype_project/pages/login/reset_password.dart';
 import 'package:prototype_project/pages/login/theme.dart';
 import 'package:prototype_project/utils/auth.dart';
-import 'package:sqflite/sqflite.dart';
+
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 /// Step 2: user types the OTP received (demo)
 class ForgotPasswordOTPScreen extends StatefulWidget {

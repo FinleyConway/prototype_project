@@ -6,7 +6,9 @@ import 'package:prototype_project/pages/login/terms_page.dart';
 import 'package:prototype_project/pages/login/theme.dart';
 import 'package:prototype_project/pages/login/validators.dart';
 import 'package:prototype_project/utils/auth.dart';
-import 'package:sqflite/sqflite.dart';
+
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 /// Registration with:
 /// - Full name (>= 6)

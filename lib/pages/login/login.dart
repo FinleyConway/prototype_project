@@ -11,7 +11,8 @@ import 'package:prototype_project/pages/login/theme.dart';
 import 'package:prototype_project/pages/login/validators.dart';
 import 'package:prototype_project/utils/auth.dart';
 
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 /// Sign-in screen: accepts either username or email + password
 /// and validates against stored salted+hashed credentials.

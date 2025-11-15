@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype_project/context/carer_db.dart';
 import 'package:prototype_project/pages/login/login.dart'
@@ -7,8 +8,10 @@ import 'package:prototype_project/pages/login/login.dart'
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // init desktop only database setup
-  if (!(Platform.isAndroid || Platform.isIOS)) {
+  if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
     // Initialize ffi implementation
     sqfliteFfiInit();
     // Set global factory
@@ -24,6 +27,7 @@ class MyApp extends StatelessWidget {
   final Database database;
 
   const MyApp({super.key, required this.database});
+
 
   // This widget is the root of your application.
   @override

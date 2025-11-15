@@ -2,8 +2,10 @@
 /// @Author: Finley Conway
 
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import 'package:table_calendar/table_calendar.dart';
+import 'package:sqflite/sqflite.dart'
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/event.dart';
