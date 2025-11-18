@@ -1,11 +1,12 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'package:prototype_project/models/symptom_log.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:prototype_project/models/user_event.dart';
 import 'package:prototype_project/models/event.dart';
+import 'package:prototype_project/models/symptom_log.dart';
+import 'package:prototype_project/models/contact.dart';
 
 class User {
   final int id;
@@ -64,6 +65,14 @@ class User {
 
   Future<SymptomLog> assignSymptomLog(Symptom symptom, String notes, DateTime timestamp, Database database) {
     return SymptomLog.create(id, symptom, notes, timestamp, database);
+  }
+
+  Future<Contact> assignContact(String name, String relation, String phoneNumber, String secondaryPhoneNumber, String notes, Database database) {
+    return Contact.create(id, name, relation, phoneNumber, secondaryPhoneNumber, notes, database);
+  }
+
+  Future<List<Contact>> getAllContacts(Database database) {
+    return Contact.getAllByUserId(id, database);
   }
 
   @override
