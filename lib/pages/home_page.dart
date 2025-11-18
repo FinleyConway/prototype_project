@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
+import 'health_log.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget  {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 2;   // current nav index (home is center)
+
+  // Handle  taps
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
+    switch (index) {
+      case 0:
+        // Navigate to Calendar, TODO
+        break;
+      case 1:
+        // Navigate to Health Log
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HealthLogPage()),
+        );
+        break;
+      case 2:
+        // home page (current)
+        break;
+      case 3:
+        // Navigate to Social, TODO
+        break;
+      case 4:
+        // Navigate to Settings, TODO
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,17 +46,9 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
-        leadingWidth: 80,  // More space
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12.0),
-          child: Image.asset(
-            'assets/images/notextLogo.png',
-            width: 40,
-            height: 40,
-          ),
-        ),
+        centerTitle: true,
         title: const Text(
-          'Home',
+          'Carepanion',
           style: TextStyle(color: Colors.white),
         ),
         actions: [
@@ -142,13 +171,23 @@ class HomePage extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       selectedItemColor: Colors.teal[700],
       unselectedItemColor: Colors.grey,
-      currentIndex: 0,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.people), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      items: [
+        const BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: ''),
+        const BottomNavigationBarItem(icon: Icon(Icons.book), label: ''),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            'assets/images/notextLogo.png',
+            height: 28,
+            color: _selectedIndex == 2 ? Colors.teal[700] : Colors.grey,
+          ),
+          label: '',
+        ),
+        const BottomNavigationBarItem(icon: Icon(Icons.people), label: ''),
+        const BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
       ],
     );
   }
