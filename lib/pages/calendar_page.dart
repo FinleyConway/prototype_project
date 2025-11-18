@@ -23,7 +23,6 @@ class MyCalendarPage extends StatefulWidget {
 
 class _MyCalendarPageState extends State<MyCalendarPage> {
   List<UserEvent> _events = [];
-  List<UserEvent> _todayEvents = [];
   bool _loading = true;
 
   @override
@@ -58,13 +57,8 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   Future<void> _loadEvents() async {
     final events = await widget.currentUser.getAllEvents(widget.database);
   
-    final todayEvents = events
-      .where((e) => e.event.occursOn(DateTime.now()))
-      .toList();
-
     setState(() {
       _events = events;
-      _todayEvents = todayEvents;
       _loading = false;
     });
   }
