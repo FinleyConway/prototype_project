@@ -50,6 +50,10 @@ class User {
     return UserEvent.getByUserId(id, database);
   }
 
+  Future<List<UserEvent>> getAllEventsOn(DateTime date, Database database) {
+    return UserEvent.getByUserId(id, database, date);
+  }
+
   Future<UserEvent> assignEvent(int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) {
     return UserEvent.create(id, eventTypeId, event, database);
   }
