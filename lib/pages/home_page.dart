@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'health_log.dart';
+import 'calendar_page.dart';
 
 class HomePage extends StatefulWidget  {
   const HomePage({super.key});
@@ -19,7 +20,11 @@ class _HomePageState extends State<HomePage> {
     
     switch (index) {
       case 0:
-        // Navigate to Calendar, TODO
+        // Navigate to Calendar
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MyCalendarPage()),
+        );
         break;
       case 1:
         // Navigate to Health Log
@@ -43,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: _buildBottomNavBar(),
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
@@ -72,7 +78,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
