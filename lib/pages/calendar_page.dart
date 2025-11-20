@@ -5,7 +5,8 @@ import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user_event.dart';
 import 'package:intl/intl.dart';
-import 'health_log.dart'; // Import for navigation
+import 'health_log.dart'; 
+import 'create_event.dart';
 
 class MyCalendarPage extends StatefulWidget {
   final User currentUser;
@@ -418,11 +419,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   }
 
   void _navigateToCreateEvent() {
-    // Navigate to create event page, TODO
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => CreateEventPage()),
-    // );
+    // Navigate to create event page
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateEventPage()),
+    );
   }
 
   List<Event> _populateDay(DateTime day) {
