@@ -13,35 +13,33 @@ import 'package:prototype_project/models/event.dart';
 class UserEvent {
   final int id;
   final int userId;
-  final int eventTypeId;
   final Event event;
   final Map<String, dynamic>? eventDetails;
 
   UserEvent({
     required this.id, 
     required this.userId, 
-    required this.eventTypeId, 
     required this.event,
     required this.eventDetails
   });
 
   // Create a User Event entity.
-  static Future<UserEvent> create(int userId, int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) async {
+  static Future<UserEvent> create(int userId, Event event, Database database, [Map<String, dynamic>? eventDetails]) async {
     final int id = await database.insert(
       "user_event",
       {
         "user_id" : userId,
         "title" : event.title,
-        "message" : event.message,
-        "is_all_day" : event.isAllDay ? 1 : 0, // sqlite doesnt have bool
-        "event_type_id" : eventTypeId,
+        "location" : event.location,
+        "event_type" : event.eventType.index,
         "repeat_type" : event.repeatType.index,
         "reminder_time_unix" : _getUnixTime(event.reminderTime),
+        "notes" : event.notes,
         "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
       },
     );
 
-    return UserEvent(id: id, userId: userId, eventTypeId: eventTypeId, event: event, eventDetails: eventDetails);
+    return UserEvent(id: id, userId: userId, event: event, eventDetails: eventDetails);
   }
 
   // Get the User Event entity from user id.
@@ -79,13 +77,13 @@ class UserEvent {
     return UserEvent(
       id: map["id"] as int, 
       userId: map["user_id"] as int,
-      eventTypeId: map["event_type_id"] as int,
       event: Event(
         title: map["title"] as String,
-        message: map["message"] as String,
-        isAllDay: (map["is_all_day"] as int) == 1, // convert int back into a bool
+        location: map["location"] as String,
+        eventType: EventType.values[map["event_type"] as int],
         repeatType: EventRepeatType.values[map["repeat_type"] as int],
-        reminderTime: _getDateFromUnix(map["reminder_time_unix"] as int)
+        reminderTime: _getDateFromUnix(map["reminder_time_unix"] as int),
+        notes: map["notes"] as String,
       ),
       eventDetails: _parseJson(map["event_detail_json"]),
     );
@@ -96,7 +94,6 @@ class UserEvent {
     return 
       id == other.id && 
       userId == other.userId &&
-      eventTypeId == other.eventTypeId &&
       event == other.event &&
       mapEquals(eventDetails, other.eventDetails);
   }
@@ -105,7 +102,6 @@ class UserEvent {
   int get hashCode => Object.hash(
     id, 
     userId,
-    eventTypeId,
     event,
     eventDetails == null ? null : Object.hashAllUnordered(eventDetails!.entries),
   );

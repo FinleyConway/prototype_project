@@ -56,8 +56,8 @@ class User {
     return UserEvent.getByUserId(id, database, date);
   }
 
-  Future<UserEvent> assignEvent(int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) {
-    return UserEvent.create(id, eventTypeId, event, database);
+  Future<UserEvent> assignEvent(Event event, Database database, [Map<String, dynamic>? eventDetails]) {
+    return UserEvent.create(id, event, database);
   }
 
   Future<List<SymptomLog>> getAllLoggedSymptoms(SymptomOrder order, SymptomSortBy sort, Database database) {

@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
+
+import 'package:prototype_project/models/user.dart';
+import 'package:prototype_project/models/event.dart';
+
 class CreateEventPage extends StatefulWidget {
-  const CreateEventPage({super.key});
+  final User currentUser;
+  final Database database;
+
+  const CreateEventPage({super.key, required this.database, required this.currentUser});
 
   @override
   State<CreateEventPage> createState() => _CreateEventPageState();
@@ -71,6 +80,19 @@ class _CreateEventPageState extends State<CreateEventPage> {
         _selectedTime.minute,
       );
       
+      final Event createdEvent = Event(
+        title: _titleController.text,
+        location: _locationController.text,
+        repeatType: _getRepeatTypeFromText(_repeatType),
+        eventType: _getEventTypeFromText(_eventType),
+        reminderTime: eventDateTime,
+        notes: _notesController.text, 
+        // TODO MAYBE: sharedWith:
+        // TODO MAYBE: alertType:
+      );
+
+      widget.currentUser.assignEvent(createdEvent, widget.database);
+
       // Create Event object and save to DB
       // For now, just show success message and go back
       ScaffoldMessenger.of(context).showSnackBar(
@@ -341,5 +363,36 @@ class _CreateEventPageState extends State<CreateEventPage> {
         ),
       ),
     );
+  }
+
+  EventRepeatType _getRepeatTypeFromText(String text) {
+    switch (text) {
+      case "Daily":
+        return EventRepeatType.daily;
+      case "Weekly":
+        return EventRepeatType.weekly;
+      case "Monthly":
+        return EventRepeatType.monthly;
+      case "Yearly":
+        return EventRepeatType.yearly;
+      case "":
+      case "Never":
+        return EventRepeatType.never;
+      default:
+        throw ArgumentError("Unknown repeat type: $text");
+    }
+  }
+
+  EventType _getEventTypeFromText(String text) {
+    switch (text) {
+      case "Appointment":
+        return EventType.appointments;
+      case "Medication":
+        return EventType.medications;
+      case "Routine":
+        return EventType.routine;
+      default:
+        throw ArgumentError("Unknown event type: $text");
+    }
   }
 }

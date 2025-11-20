@@ -20,5 +20,10 @@ Future<void> testCreatingContact() async {
 }
 
 void main() {
+  // Initialize ffi implementation
+  sqfliteFfiInit();
+  // Set global factory
+  databaseFactory = databaseFactoryFfi;
+
   test("Creating Contact", testCreatingContact);
 }

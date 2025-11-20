@@ -87,6 +87,11 @@ Future<void> testQuerySymptomLogSymptom() async {
 }
 
 void main() {
+  // Initialize ffi implementation
+  sqfliteFfiInit();
+  // Set global factory
+  databaseFactory = databaseFactoryFfi;
+
   test("Creating Symptom Log", testCreatingSymptomLog);
   test("Query Symptom Log By Time", testQuerySymptomLogTime);
   test("Query Symptom Log By Symptom", testQuerySymptomLogSymptom);

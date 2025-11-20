@@ -335,9 +335,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                 children: [
                   // Time
                   Text(
-                    event.isAllDay
-                        ? 'All Day'
-                        : DateFormat('h:mm a').format(event.reminderTime),
+                    DateFormat('h:mm a').format(event.reminderTime),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -357,10 +355,10 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                   ),
 
                   // Message
-                  if (event.message.isNotEmpty) ...[
+                  if (event.notes.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      event.message,
+                      event.notes,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -425,8 +423,10 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     // Navigate to create event page
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CreateEventPage()),
-    );
+      MaterialPageRoute(builder: (context) => CreateEventPage(database: widget.database, currentUser: widget.currentUser)),
+    ).then((_) {
+      _loadEvents();
+    });
   }
 
   List<Event> _populateDay(DateTime day) {
