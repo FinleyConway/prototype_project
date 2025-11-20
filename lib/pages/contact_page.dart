@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_project/pages/create_contact_page.dart';
 
 class MyContactPage extends StatefulWidget {
   const MyContactPage({super.key});
@@ -246,7 +247,7 @@ class _MyContactPageState extends State<MyContactPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {}, // TODO: go to create contact page
+        onPressed: _naviageteToCreateContact,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -260,6 +261,15 @@ class _MyContactPageState extends State<MyContactPage> {
         ),
       ),
     );
+  }
+
+  void _naviageteToCreateContact() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyCreateContactPage()),
+    ).then((_) {
+      _loadContacts();
+    });
   }
 
   void _loadContacts() async {
