@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:prototype_project/pages/contact_page.dart';
 import 'package:window_size/window_size.dart';
 
 import 'pages/home_page.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: const HomePage(),
+      home: const MyContactPage(),
     );
   }
 }
