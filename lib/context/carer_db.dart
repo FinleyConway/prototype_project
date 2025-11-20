@@ -1,21 +1,12 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'dart:io';
-
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class CarerDb {
   static Future<Database> create([String? path]) async
   {
-    // init desktop only database setup
-    if (!(Platform.isAndroid || Platform.isIOS)) {
-      // Initialize ffi implementation
-      sqfliteFfiInit();
-      // Set global factory
-      databaseFactory = databaseFactoryFfi;
-    }
-
     Database db = await openDatabase(
       path ?? inMemoryDatabasePath, // creates a database within memory or by specific path
       version: 1,

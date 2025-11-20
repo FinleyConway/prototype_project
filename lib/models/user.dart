@@ -1,7 +1,8 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/user_event.dart';
 import 'package:prototype_project/models/event.dart';

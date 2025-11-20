@@ -1,11 +1,15 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_size/window_size.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'package:prototype_project/models/user.dart'; // temp
+import 'package:prototype_project/context/carer_db.dart';
 import 'pages/home_page.dart';
 
-void main() {
+void main() async {
   // create a phone like experience on the desktop
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -18,36 +22,39 @@ void main() {
     setWindowMinSize(const Size(sizeX, sizeY));
   }
 
-  runApp(const MyApp());
+  // init desktop only database setup
+  if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+    // Initialize ffi implementation
+    sqfliteFfiInit();
+    // Set global factory
+    databaseFactory = databaseFactoryFfi;
+  }
+
+  // create database context
+  Database database = await CarerDb.create();
+
+  // -- temp --
+  // creates a temp person with dementia 
+  User user = await User.create("PeterPrototype", database); // need a way of creating of globally creating a user and selecting a user
+  // -- temp --
+
+  runApp(MyApp(database: database, user: user));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final User user; // temp
+  final Database database;
 
-  // This widget is the root of your application.
+  const MyApp({super.key, required this.database, required this.user});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Caregiver App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: const HomePage(),
+      home: HomePage(database: database, currentUser: user),
     );
   }
 }

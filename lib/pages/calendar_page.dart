@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user_event.dart';
-import 'package:intl/intl.dart';
-import 'health_log.dart'; 
-import 'create_event.dart';
+import 'package:prototype_project/pages/create_event.dart';
+import 'package:prototype_project/pages/health_log.dart';
+
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class MyCalendarPage extends StatefulWidget {
   final User currentUser;
@@ -47,7 +50,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
         // Navigate to Health Log
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HealthLogPage()),
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
         );
         break;
       case 2:
