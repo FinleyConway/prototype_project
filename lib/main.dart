@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype_project/pages/contact_page.dart';
 import 'package:window_size/window_size.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -55,7 +54,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: MyContactPage(database: database, currentUser: user),
+      home: HomePage(database: database, currentUser: user),
     );
   }
 }

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
+import 'package:prototype_project/models/user.dart';
+
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
+
 class MyCreateContactPage extends StatefulWidget {
-  const MyCreateContactPage({super.key});
+  final User currentUser;
+  final Database database;
+
+  const MyCreateContactPage({super.key, required this.currentUser, required this.database});
 
   @override
   State<MyCreateContactPage> createState() => _MyCreateContactPageState();
@@ -160,6 +168,14 @@ class _MyCreateContactPageState extends State<MyCreateContactPage> {
   void _navigateBackCreated() {
     if (_formKey.currentState!.validate()) {
       // do backend stuff
+      widget.currentUser.assignContact(
+        _nameController.text,
+        _relationController.text,
+        _phoneController.text,
+        _secondaryPhoneController.text,
+        _notesController.text,
+        widget.database
+      );
 
       _naviageteBack();
     }

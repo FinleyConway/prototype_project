@@ -258,7 +258,7 @@ class _MyContactPageState extends State<MyContactPage> {
   void _naviageteToCreateContact() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MyCreateContactPage()),
+      MaterialPageRoute(builder: (context) => MyCreateContactPage(database: widget.database, currentUser: widget.currentUser)),
     ).then((_) {
       _loadContacts();
     });
