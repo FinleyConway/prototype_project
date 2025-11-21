@@ -1,21 +1,12 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'dart:io';
-
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class CarerDb {
   static Future<Database> create([String? path]) async
   {
-    // init desktop only database setup
-    if (!(Platform.isAndroid || Platform.isIOS)) {
-      // Initialize ffi implementation
-      sqfliteFfiInit();
-      // Set global factory
-      databaseFactory = databaseFactoryFfi;
-    }
-
     Database db = await openDatabase(
       path ?? inMemoryDatabasePath, // creates a database within memory or by specific path
       version: 1,
@@ -29,9 +20,9 @@ class CarerDb {
     await database.execute(_createCarerTable());
     await database.execute(_createUserTable());
     await database.execute(_createCarerToUserTable());
-    await database.execute(_createEventTypeTable());
     await database.execute(_createUserEventTable());
     await database.execute(_createSymptomLogTable());
+    await database.execute(_createContactTable());
   }
 
   static String _createCarerTable() {
@@ -65,29 +56,19 @@ class CarerDb {
     """;
   }
 
-  static String _createEventTypeTable() {
-    return """
-      CREATE TABLE event_type (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT
-      );
-    """;
-  }
-
   static String _createUserEventTable() {
     return """
       CREATE TABLE user_event (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
-        event_type_id INTEGER,
         title TEXT,
-        message TEXT,
-        is_all_day INT,
-        repeat_type INT,
-        reminder_time_unix INT,
+        location TEXT,
+        event_type INTEGER,
+        repeat_type INTEGER,
+        reminder_time_unix INTEGER,
+        notes TEXT,
         event_detail_json TEXT,
-        FOREIGN KEY (user_id) REFERENCES user(id),
-        FOREIGN KEY (event_type_id) REFERENCES event_type(id)
+        FOREIGN KEY (user_id) REFERENCES user(id)
       );
     """;
   }
@@ -97,9 +78,24 @@ class CarerDb {
       CREATE TABLE symptom_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
-        symptom_type INT,
+        symptom_type INTEGER,
         notes TEXT,
-        timestamp_unix INT,
+        timestamp_unix INTEGER,
+        FOREIGN KEY (user_id) REFERENCES user(id)
+      );
+    """;
+  }
+
+  static String _createContactTable() {
+    return """
+      CREATE TABLE contact (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        name TEXT,
+        relation TEXT,
+        phone_number TEXT,
+        secondary_phone_number TEXT,
+        notes TEXT,
         FOREIGN KEY (user_id) REFERENCES user(id)
       );
     """;

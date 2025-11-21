@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/event.dart';
-import 'package:prototype_project/context/carer_db.dart';
 import 'package:prototype_project/models/user_event.dart';
-import 'package:intl/intl.dart';
-import 'health_log.dart'; 
-import 'create_event.dart';
+import 'package:prototype_project/pages/create_event.dart';
+import 'package:prototype_project/pages/health_log.dart';
+
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class MyCalendarPage extends StatefulWidget {
-  const MyCalendarPage({super.key});
+  final User currentUser;
+  final Database database;
+
+  const MyCalendarPage({super.key, required this.database, required this.currentUser});
 
   @override
   State<MyCalendarPage> createState() => _MyCalendarPageState();
 }
 
 class _MyCalendarPageState extends State<MyCalendarPage> {
-  Map<DateTime, List<Event>> _events = {};
+  List<UserEvent> _events = [];
+  bool _loading = true;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   final CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -26,7 +32,8 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   @override
   void initState() {
     super.initState();
-    _onUserEventFetch();
+    
+    _loadEvents();
   }
 
   // Handle navbar taps
@@ -43,7 +50,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
         // Navigate to Health Log
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HealthLogPage()),
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
         );
         break;
       case 2:
@@ -61,6 +68,13 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    // since i cant call async future in initState, we have to wait before loading the ui
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -236,6 +250,15 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     );
   }
 
+  Future<void> _loadEvents() async {
+    final events = await widget.currentUser.getAllEvents(widget.database);
+
+    setState(() {
+      _events = events;
+      _loading = false;
+    });
+  }
+  
   Widget _buildEventsList() {
     final eventsForDay = _populateDay(_selectedDay);
 
@@ -312,9 +335,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                 children: [
                   // Time
                   Text(
-                    event.isAllDay
-                        ? 'All Day'
-                        : DateFormat('h:mm a').format(event.reminderTime),
+                    DateFormat('h:mm a').format(event.reminderTime),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -334,10 +355,10 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                   ),
 
                   // Message
-                  if (event.message.isNotEmpty) ...[
+                  if (event.notes.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      event.message,
+                      event.notes,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -402,55 +423,24 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     // Navigate to create event page
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CreateEventPage()),
-    );
-  }
-
-  Future<void> _onUserEventFetch() async {
-    // temp database setup
-    Database database = await CarerDb.create();
-    final User user = await User.create("Bob", database);
-    await UserEvent.create(
-        user.id,
-        1,
-        Event(
-            title: "Test",
-            message: "A Message",
-            isAllDay: false,
-            repeatType: EventRepeatType.weekly,
-            reminderTime: DateTime(2025, 11, 7)),
-        database);
-    //  -- end of temp
-
-    // get all events for user and arranged them into a map
-    final List<UserEvent> events = await UserEvent.getByUserId(user.id, database);
-    Map<DateTime, List<Event>> fetchedEvents = {};
-    for (final UserEvent userEvent in events) {
-      final DateTime reminder = userEvent.event.reminderTime;
-      fetchedEvents.putIfAbsent(_getAbsoluteDate(reminder), () => []).add(userEvent.event);
-    }
-
-    // update ui
-    setState(() {
-      _events = fetchedEvents;
+      MaterialPageRoute(builder: (context) => CreateEventPage(database: widget.database, currentUser: widget.currentUser)),
+    ).then((_) {
+      _loadEvents();
     });
   }
 
   List<Event> _populateDay(DateTime day) {
     List<Event> occurringSomeDayEvents = [];
-    // checks all events in the map
-    for (final eventList in _events.values) {
-      for (final event in eventList) {
-        if (event.occursOn(day)) {
-          occurringSomeDayEvents.add(event);
-        }
+
+    for (final userEvent in _events) {
+      final Event event = userEvent.event;
+
+      if (event.occursOn(day)) {
+        occurringSomeDayEvents.add(event);
       }
     }
-    return occurringSomeDayEvents;
-  }
 
-  DateTime _getAbsoluteDate(DateTime date) {
-    return DateTime(date.year, date.month, date.day);
+    return occurringSomeDayEvents;
   }
 
   Widget _buildBottomNavBar() {

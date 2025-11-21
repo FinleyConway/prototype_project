@@ -1,11 +1,13 @@
 /// @Created on: 4/11/25
 /// @Author: Finley Conway
 
-import 'package:prototype_project/models/symptom_log.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/user_event.dart';
 import 'package:prototype_project/models/event.dart';
+import 'package:prototype_project/models/symptom_log.dart';
+import 'package:prototype_project/models/contact.dart';
 
 class User {
   final int id;
@@ -50,8 +52,12 @@ class User {
     return UserEvent.getByUserId(id, database);
   }
 
-  Future<UserEvent> assignEvent(int eventTypeId, Event event, Database database, [Map<String, dynamic>? eventDetails]) {
-    return UserEvent.create(id, eventTypeId, event, database);
+  Future<List<UserEvent>> getAllEventsOn(DateTime date, Database database) {
+    return UserEvent.getByUserId(id, database, date);
+  }
+
+  Future<UserEvent> assignEvent(Event event, Database database, [Map<String, dynamic>? eventDetails]) {
+    return UserEvent.create(id, event, database);
   }
 
   Future<List<SymptomLog>> getAllLoggedSymptoms(SymptomOrder order, SymptomSortBy sort, Database database) {
@@ -60,6 +66,14 @@ class User {
 
   Future<SymptomLog> assignSymptomLog(Symptom symptom, String notes, DateTime timestamp, Database database) {
     return SymptomLog.create(id, symptom, notes, timestamp, database);
+  }
+
+  Future<Contact> assignContact(String name, String relation, String phoneNumber, String secondaryPhoneNumber, String notes, Database database) {
+    return Contact.create(id, name, relation, phoneNumber, secondaryPhoneNumber, notes, database);
+  }
+
+  Future<List<Contact>> getAllContacts(Database database) {
+    return Contact.getAllByUserId(id, database);
   }
 
   @override

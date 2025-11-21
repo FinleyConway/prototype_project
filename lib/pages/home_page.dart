@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import 'health_log.dart';
-import 'calendar_page.dart';
+
+import 'package:prototype_project/models/user.dart';
+import 'package:prototype_project/pages/calendar_page.dart';
+import 'package:prototype_project/pages/health_log.dart';
+
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class HomePage extends StatefulWidget  {
-  const HomePage({super.key});
+  final User currentUser;
+  final Database database;
+
+  const HomePage({super.key, required this.database, required this.currentUser}); // temp user paramater
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,14 +31,14 @@ class _HomePageState extends State<HomePage> {
         // Navigate to Calendar
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const MyCalendarPage()),
+          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser)),
         );
         break;
       case 1:
         // Navigate to Health Log
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HealthLogPage()),
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
         );
         break;
       case 2:
