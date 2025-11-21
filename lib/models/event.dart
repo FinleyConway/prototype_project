@@ -9,30 +9,42 @@ enum EventRepeatType {
   yearly
 }
 
+enum EventType {
+  appointments,
+  medications,
+  routine
+}
+
 class Event {
   final String title;
-  final String message;
-  final bool isAllDay;
+  final String location;
   final EventRepeatType repeatType;
+  final EventType eventType;
   final DateTime reminderTime;
+  final String notes;
 
   Event({
     required this.title, 
-    required this.message, 
-    required this.isAllDay, 
+    required this.location,
     required this.repeatType, 
-    required this.reminderTime
+    required this.eventType,
+    required this.reminderTime,
+    required this.notes
   });
 
   bool occursOn(DateTime day) {
-    if (reminderTime.isAtSameMomentAs(day)) return true;
-    if (day.isBefore(reminderTime)) return false; // prevents setting events in the past
+    // strip date to ignore time
+    final DateTime eventDate = DateTime(reminderTime.year, reminderTime.month, reminderTime.day);
+    final DateTime targetDate = DateTime(day.year, day.month, day.day);
+
+    if (eventDate == targetDate) return true;
+    if (targetDate.isBefore(eventDate)) return false; // prevents setting events in the past
 
     switch (repeatType) {
       case EventRepeatType.daily: return true;
-      case EventRepeatType.weekly: return day.weekday == reminderTime.weekday;
-      case EventRepeatType.monthly: return day.day == reminderTime.day;
-      case EventRepeatType.yearly: return day.month == reminderTime.month && day.day == reminderTime.day; 
+      case EventRepeatType.weekly: return targetDate.weekday == eventDate.weekday;
+      case EventRepeatType.monthly: return targetDate.day == eventDate.day;
+      case EventRepeatType.yearly: return targetDate.month == eventDate.month && targetDate.day == eventDate.day; 
       case EventRepeatType.never: return false;
     }
   }
@@ -41,8 +53,8 @@ class Event {
   bool operator ==(covariant Event other) {
     return 
       title == other.title &&
-      message == other.message &&
-      isAllDay == other.isAllDay &&
+      location == other.location &&
+      notes == other.notes &&
       repeatType == other.repeatType &&
       reminderTime == other.reminderTime;
   }
@@ -50,8 +62,8 @@ class Event {
   @override
   int get hashCode => Object.hash(
     title,
-    message,
-    isAllDay,
+    location,
+    notes,
     repeatType,
     reminderTime,
   );

@@ -4,8 +4,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:crypto/crypto.dart';
+
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/carer_to_user.dart';
 import 'package:prototype_project/models/user.dart';

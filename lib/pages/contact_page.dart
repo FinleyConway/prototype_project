@@ -1,28 +1,20 @@
 import 'package:flutter/material.dart';
+
+import 'package:prototype_project/models/user.dart';
+import 'package:prototype_project/models/contact.dart';
 import 'package:prototype_project/pages/create_contact_page.dart';
 
+import 'package:sqflite/sqflite.dart' // mobile sqflite
+if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
+
 class MyContactPage extends StatefulWidget {
-  const MyContactPage({super.key});
+  final User currentUser;
+  final Database database;
+
+  const MyContactPage({super.key, required this.database, required this.currentUser});
 
   @override
   State<MyContactPage> createState() => _MyContactPageState();
-}
-
-// temp until pull request is made
-class Contact {
-  final String name;
-  final String relation;
-  final String phoneNumber;
-  final String secondaryPhoneNumber;
-  final String notes;
-
-  Contact({
-    required this.name,
-    required this.relation,
-    required this.phoneNumber,
-    required this.secondaryPhoneNumber,
-    required this.notes,
-  });
 }
 
 class _MyContactPageState extends State<MyContactPage> {
@@ -32,7 +24,7 @@ class _MyContactPageState extends State<MyContactPage> {
   @override
   void initState() {
     super.initState();
-
+    
     _loadContacts();
   }
 
@@ -273,22 +265,7 @@ class _MyContactPageState extends State<MyContactPage> {
   }
 
   void _loadContacts() async {
-    final List<Contact> contacts = [
-      Contact(
-        name: "finley",
-        relation: "bro",
-        phoneNumber: "+1234",
-        secondaryPhoneNumber: "",
-        notes: "",
-      ),
-      Contact(
-        name: "bobby",
-        relation: "bro",
-        phoneNumber: "+123",
-        secondaryPhoneNumber: "+456",
-        notes: "Dont ring",
-      )
-    ];
+    final List<Contact> contacts = await widget.currentUser.getAllContacts(widget.database);
 
     setState(() {
       _contacts = contacts;

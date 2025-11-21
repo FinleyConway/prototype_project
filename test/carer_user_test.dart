@@ -59,6 +59,11 @@ Future<void> testCarerToUsers() async {
 }
 
 void main() {
+  // Initialize ffi implementation
+  sqfliteFfiInit();
+  // Set global factory
+  databaseFactory = databaseFactoryFfi;
+
   test("Creating Carer", testCreatingCarer);
   test("Creating User", testCreatingUser);
   test("Carer To Users", testCarerToUsers);
