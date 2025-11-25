@@ -223,13 +223,15 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
 
     if (index == -1) return;
 
-    final bool checked = !_events[index].event.completed; // get the opposite boolean
+    final Event changedEvent = _events[index].event; 
+    changedEvent.completed = !changedEvent.completed;
 
     // update backend
+    widget.currentUser.updateEvent(eventId, changedEvent, widget.database);
 
     // update user interface
     setState(() {
-      _events[index].event.completed = checked;
+      _events[index].event.completed = changedEvent.completed;
     });
   }
 

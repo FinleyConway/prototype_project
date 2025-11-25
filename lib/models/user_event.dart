@@ -43,6 +43,27 @@ class UserEvent {
     return UserEvent(id: id, userId: userId, event: event, eventDetails: eventDetails);
   }
 
+  static Future<UserEvent> update(int id, int userId, Event event, Database database, [Map<String, dynamic>? eventDetails]) async {
+    await database.update(
+      "user_event",
+      {
+        "user_id" : userId,
+        "title" : event.title,
+        "location" : event.location,
+        "event_type" : event.eventType.index,
+        "repeat_type" : event.repeatType.index,
+        "reminder_time_unix" : _getUnixTime(event.reminderTime),
+        "notes" : event.notes,
+        "completed" : event.completed ? 1 : 0,
+        "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
+      },
+      where: "id = ?",
+      whereArgs: [id]
+    );
+
+    return UserEvent(id: id, userId: userId, event: event, eventDetails: eventDetails);
+  } 
+
   // Get the User Event entity from user id.
   static Future<List<UserEvent>> getByUserId(int userId, Database database, {DateTime? date, EventType? reminderType}) async {
     String where = "user_id = ?";

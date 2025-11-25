@@ -64,6 +64,10 @@ class User {
     return UserEvent.create(id, event, database);
   }
 
+  Future<UserEvent> updateEvent(int eventId, Event event, Database database) {
+    return UserEvent.update(eventId, id, event, database);
+  }
+
   Future<List<SymptomLog>> getAllLoggedSymptoms(SymptomOrder order, SymptomSortBy sort, Database database) {
     return SymptomLog.getAll(id, order, sort, database);
   }
