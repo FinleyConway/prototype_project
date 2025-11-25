@@ -21,7 +21,8 @@ Future<void> testCreatingUserEvent() async {
     eventType: EventType.appointments,
     repeatType: EventRepeatType.daily, 
     reminderTime: DateTime(2025, 4, 7, 0),
-    notes: "Blah blah blah"
+    notes: "Blah blah blah",
+    completed: false
   );
 
   final UserEvent createdUserEvent = await user.assignEvent(event, db);
@@ -44,7 +45,8 @@ Future<void> testCreatingUserEventWithData() async {
     eventType: EventType.appointments,
     repeatType: EventRepeatType.daily, 
     reminderTime: DateTime(2025, 4, 7, 0),
-    notes: "Blah blah blah"
+    notes: "Blah blah blah",
+    completed: false
   );
 
   // create an user event and search for it by user id

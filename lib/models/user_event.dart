@@ -35,6 +35,7 @@ class UserEvent {
         "repeat_type" : event.repeatType.index,
         "reminder_time_unix" : _getUnixTime(event.reminderTime),
         "notes" : event.notes,
+        "completed" : event.completed == null || event.completed == false ? 0 : 1,
         "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
       },
     );
@@ -89,6 +90,7 @@ class UserEvent {
         repeatType: EventRepeatType.values[map["repeat_type"] as int],
         reminderTime: _getDateFromUnix(map["reminder_time_unix"] as int),
         notes: map["notes"] as String,
+        completed: (map["completed"] as int) == 1,
       ),
       eventDetails: _parseJson(map["event_detail_json"]),
     );

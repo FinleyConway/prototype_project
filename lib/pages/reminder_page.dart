@@ -118,6 +118,10 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
     );
   }
 
+  Widget _createReminderCard() {
+    return Container();
+  }
+
   Future<void> _loadTabData(int tabIndex) async {
     setState(() {
       _loadingData = true;
