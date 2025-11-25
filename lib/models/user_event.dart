@@ -35,7 +35,7 @@ class UserEvent {
         "repeat_type" : event.repeatType.index,
         "reminder_time_unix" : _getUnixTime(event.reminderTime),
         "notes" : event.notes,
-        "completed" : event.completed == null || event.completed == false ? 0 : 1,
+        "completed" : event.completed ? 1 : 0,
         "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
       },
     );

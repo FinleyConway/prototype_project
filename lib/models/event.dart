@@ -22,7 +22,7 @@ class Event {
   final EventType eventType;
   final DateTime reminderTime;
   final String notes;
-  final bool completed;
+  bool completed;
 
   Event({
     required this.title, 

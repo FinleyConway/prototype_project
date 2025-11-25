@@ -87,6 +87,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         eventType: _getEventTypeFromText(_eventType),
         reminderTime: eventDateTime,
         notes: _notesController.text, 
+        completed: false
         // TODO MAYBE: sharedWith:
         // TODO MAYBE: alertType:
       );

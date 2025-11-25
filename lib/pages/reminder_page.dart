@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/user_event.dart';
+import 'package:prototype_project/pages/create_event.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
@@ -33,7 +35,7 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) return;
-
+      
       _loadTabData(_tabController.index);
     });
 
@@ -80,7 +82,7 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
       actions: [
         IconButton(
           icon: Icon(Icons.add_circle_outline, color: Color(0xFF7BAE9F)),
-          onPressed: () {}, // TODO: Go to create event page
+          onPressed: _naviageteToCreateEvent,
         ),
       ],
       bottom: _createTabBar()
@@ -102,7 +104,7 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
       ),
       indicatorColor: Color(0xFF7FA99B),
       indicatorWeight: 2,
-      tabs: const <Widget> [ // this can expand on later if we decided to have custom events
+      tabs: const <Widget> [ // this could expand on later if we decided to have custom events
         Tab(text: "Appointments"),
         Tab(text: "Medications"),
         Tab(text: "Routine")
@@ -112,14 +114,85 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
 
   Widget _buildTab() {
     if (_loadingData) return const Center(child: CircularProgressIndicator());
+    if (_events.isEmpty) return const Center(child: Text("No reminders"));
 
-    return ListView( // TODO: list all events from type
-
+    // display every event
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        for (final UserEvent userEvent in _events) ...[
+          _createReminderCard(
+            userEvent.id,
+            userEvent.event.title, 
+            userEvent.event.reminderTime, 
+            userEvent.event.location,
+            userEvent.event.notes, 
+            userEvent.event.completed,
+            _toggleCompleteReminder
+          ),
+          const SizedBox(height: 16),
+        ]
+      ]
     );
   }
 
-  Widget _createReminderCard() {
-    return Container();
+  Widget _createReminderCard(int id, String title, DateTime dateTime, String location, String note, bool completed, void Function(int id) onToggleCompleted) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        children: [
+          // complete check box
+          InkWell(
+            onTap: () => onToggleCompleted(id),
+            child: Icon(
+              completed ? Icons.check_box : Icons.check_box_outline_blank,
+              color: completed ? const Color(0xFF7BAE9F) : Colors.grey,
+              size: 28,
+            ),
+          ),
+          const SizedBox(height: 8),
+          // the set date
+          Text(
+            DateFormat('EEEE, d MMMM').format(dateTime),
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4), 
+          // the set time
+          Text(
+            DateFormat('HH:mm').format(dateTime),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 6),
+          // the event location
+          Text(
+            location,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+          const SizedBox(height: 6),
+          // the optional note
+          Text(
+            note,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadTabData(int tabIndex) async {
@@ -136,10 +209,36 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
       default: type = EventType.appointments;
     }
 
+    // fetch backend data
     _events = await widget.currentUser.getAllEventsOfType(type, widget.database);
 
+    // update ui when fetched
     setState(() {
       _loadingData = false;
+    });
+  }
+
+  void _toggleCompleteReminder(int eventId) {
+    final int index = _events.indexWhere((e) => e.id == eventId);
+
+    if (index == -1) return;
+
+    final bool checked = !_events[index].event.completed; // get the opposite boolean
+
+    // update backend
+
+    // update user interface
+    setState(() {
+      _events[index].event.completed = checked;
+    });
+  }
+
+  void _naviageteToCreateEvent() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateEventPage(database: widget.database, currentUser: widget.currentUser)),
+    ).then((_) {
+      _loadTabData(0);
     });
   }
 }
