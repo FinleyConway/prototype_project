@@ -53,7 +53,11 @@ class User {
   }
 
   Future<List<UserEvent>> getAllEventsOn(DateTime date, Database database) {
-    return UserEvent.getByUserId(id, database, date);
+    return UserEvent.getByUserId(id, database, date: date);
+  }
+
+  Future<List<UserEvent>> getAllEventsOfType(EventType eventType, Database database) {
+    return UserEvent.getByUserId(id, database, reminderType: eventType);
   }
 
   Future<UserEvent> assignEvent(Event event, Database database, [Map<String, dynamic>? eventDetails]) {

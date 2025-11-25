@@ -43,13 +43,18 @@ class UserEvent {
   }
 
   // Get the User Event entity from user id.
-  static Future<List<UserEvent>> getByUserId(int userId, Database database, [DateTime? date]) async {
+  static Future<List<UserEvent>> getByUserId(int userId, Database database, {DateTime? date, EventType? reminderType}) async {
     String where = "user_id = ?";
     List<dynamic> whereArgs = [userId];
 
     if (date != null) {
       where += " AND reminder_time_unix = ?";
       whereArgs.add(_getUnixTime(date));
+    }
+
+    if (reminderType != null) {
+      where += " AND event_type = ?";
+      whereArgs.add(reminderType.index);
     }
 
     final result = await database.query(
