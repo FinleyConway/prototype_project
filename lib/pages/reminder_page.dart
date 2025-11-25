@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/models/user_event.dart';
+import 'package:prototype_project/pages/calendar_page.dart';
 import 'package:prototype_project/pages/create_event.dart';
+import 'package:prototype_project/pages/health_log.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
@@ -27,6 +29,7 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
   late final TabController _tabController;
   List<UserEvent> _events = [];
   bool _loadingData =  true;
+  int _selectedIndex = 3; // current nav index (Remidner)
 
   @override
   void initState() {
@@ -49,9 +52,42 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
     super.dispose();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate tn Calendar 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser)),
+        );
+        break;
+      case 1:
+        // Navigate to Health Log
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
+        );
+        break;
+      case 2:
+        // Navigate Home
+        Navigator.pop(context);
+        break;
+      case 3:
+        break;
+      case 4:
+        // Navigate to Settings, TODO
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: _buildBottomNavBar(),
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: _createAppBar(),
       body: TabBarView(
@@ -242,5 +278,31 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
     ).then((_) {
       _loadTabData(0);
     });
+  }
+
+  Widget _buildBottomNavBar() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.teal[700],
+      unselectedItemColor: Colors.grey,
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      items: [
+        const BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: ''),
+        const BottomNavigationBarItem(icon: Icon(Icons.book), label: ''),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            'assets/images/notextLogo.png',
+            height: 28,
+            color: _selectedIndex == 2 ? Colors.teal[700] : Colors.grey,
+          ),
+          label: '',
+        ),
+        const BottomNavigationBarItem(icon: Icon(Icons.people), label: ''),
+        const BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
+      ],
+    );
   }
 }
