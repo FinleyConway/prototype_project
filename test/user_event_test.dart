@@ -21,7 +21,8 @@ Future<void> testCreatingUserEvent() async {
     eventType: EventType.appointments,
     repeatType: EventRepeatType.daily, 
     reminderTime: DateTime(2025, 4, 7, 0),
-    notes: "Blah blah blah"
+    notes: "Blah blah blah",
+    completed: false
   );
 
   final UserEvent createdUserEvent = await user.assignEvent(event, db);
@@ -44,7 +45,8 @@ Future<void> testCreatingUserEventWithData() async {
     eventType: EventType.appointments,
     repeatType: EventRepeatType.daily, 
     reminderTime: DateTime(2025, 4, 7, 0),
-    notes: "Blah blah blah"
+    notes: "Blah blah blah",
+    completed: false
   );
 
   // create an user event and search for it by user id
@@ -61,6 +63,42 @@ Future<void> testCreatingUserEventWithData() async {
   await db.close();
 }
 
+Future<void> testUpdatingUserEvent() async {
+  final Database db = await CarerDb.create();
+
+  final User user = await User.create("Finley", db);
+
+  final Event event = Event(
+    title: "Wake up", 
+    location: "Here",
+    eventType: EventType.appointments,
+    repeatType: EventRepeatType.daily, 
+    reminderTime: DateTime(2025, 4, 7, 0),
+    notes: "Blah blah blah",
+    completed: false
+  );
+
+  final UserEvent createdUserEvent = await user.assignEvent(event, db);
+
+  final Event updatedEvent = Event(
+    title: "Wake up NOW", 
+    location: "Here!!!",
+    eventType: EventType.medications,
+    repeatType: EventRepeatType.weekly, 
+    reminderTime: DateTime(2025, 4, 7, 0),
+    notes: "No talking!",
+    completed: true
+  );
+
+  await user.updateEvent(createdUserEvent.id, updatedEvent, db);
+
+  final List<UserEvent?> protentialEvent = await user.getAllEvents(db);
+
+  expect(protentialEvent.first?.event, updatedEvent);
+
+  await db.close();
+}
+
 void main() {
   // Initialize ffi implementation
   sqfliteFfiInit();
@@ -69,4 +107,5 @@ void main() {
 
   test("Creating User Event", testCreatingUserEvent);
   test("Creating User Event With Data", testCreatingUserEventWithData);
+  test("Updating User Event", testUpdatingUserEvent);
 }

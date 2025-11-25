@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/pages/calendar_page.dart';
 import 'package:prototype_project/pages/health_log.dart';
+import 'package:prototype_project/pages/reminder_page.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
@@ -45,7 +46,11 @@ class _HomePageState extends State<HomePage> {
         // home page (current)
         break;
       case 3:
-        // Navigate to Social, TODO
+        // Navigate to Reminder
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser)),
+        );
         break;
       case 4:
         // Navigate to Settings, TODO

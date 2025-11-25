@@ -7,6 +7,7 @@ import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user_event.dart';
 import 'package:prototype_project/pages/create_event.dart';
 import 'package:prototype_project/pages/health_log.dart';
+import 'package:prototype_project/pages/reminder_page.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
@@ -58,7 +59,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
         Navigator.pop(context);
         break;
       case 3:
-        // Navigate to Social, TODO
+        // Navigate to Reminder
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser)),
+        );
         break;
       case 4:
         // Navigate to Settings, TODO

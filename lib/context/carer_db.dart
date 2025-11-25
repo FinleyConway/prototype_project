@@ -67,6 +67,7 @@ class CarerDb {
         repeat_type INTEGER,
         reminder_time_unix INTEGER,
         notes TEXT,
+        completed INT,
         event_detail_json TEXT,
         FOREIGN KEY (user_id) REFERENCES user(id)
       );

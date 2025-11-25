@@ -22,6 +22,7 @@ class Event {
   final EventType eventType;
   final DateTime reminderTime;
   final String notes;
+  bool completed;
 
   Event({
     required this.title, 
@@ -29,7 +30,8 @@ class Event {
     required this.repeatType, 
     required this.eventType,
     required this.reminderTime,
-    required this.notes
+    required this.notes,
+    required this.completed
   });
 
   bool occursOn(DateTime day) {
@@ -56,7 +58,8 @@ class Event {
       location == other.location &&
       notes == other.notes &&
       repeatType == other.repeatType &&
-      reminderTime == other.reminderTime;
+      reminderTime == other.reminderTime &&
+      completed == other.completed;
   }
 
   @override
@@ -66,5 +69,6 @@ class Event {
     notes,
     repeatType,
     reminderTime,
+    completed
   );
 }
