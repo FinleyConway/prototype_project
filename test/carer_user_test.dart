@@ -14,7 +14,7 @@ import 'package:prototype_project/models/user.dart';
 Future<void> testCreatingCarer() async {
   final Database db = await CarerDb.create();
 
-  final Carer newCarer = await Carer.create("Finley", "1234", db);
+  final Carer newCarer = await Carer.create("Finley", "Finley@gmail.com", "Corn", "1234", true, db);
   final Carer? carer = await Carer.getById(newCarer.id, db);
 
   expect(carer, newCarer);
@@ -36,7 +36,7 @@ Future<void> testCreatingUser() async {
 Future<void> testCarerToUsers() async {
   final Database db = await CarerDb.create();
 
-  final Carer carer = await Carer.create("Finley", "1234", db); 
+  final Carer carer = await Carer.create("Finley", "Finley@gmail.com", "Corn", "1234", true, db);
   List<User> users = []; 
 
   // create and assign users to carer

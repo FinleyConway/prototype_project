@@ -7,7 +7,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:prototype_project/models/user.dart'; // temp
 import 'package:prototype_project/context/carer_db.dart';
-import 'pages/home_page.dart';
+import 'pages/login/login.dart';
 
 void main() async {
   // create a phone like experience on the desktop
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: HomePage(database: database, currentUser: user),
+      home: LoginScreen(database: database, currentUser: user),
     );
   }
 }

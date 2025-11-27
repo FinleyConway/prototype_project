@@ -18,6 +18,7 @@ class CarerDb {
 
   static Future<void> _onCreateTables(Database database, int version) async {
     await database.execute(_createCarerTable());
+    await database.execute(_createOtpCodesTable());
     await database.execute(_createUserTable());
     await database.execute(_createCarerToUserTable());
     await database.execute(_createUserEventTable());
@@ -30,7 +31,21 @@ class CarerDb {
       CREATE TABLE carer(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        password TEXT
+        email TEXT,
+        username TEXT,
+        password TEXT,
+        salt TEXT,
+        terms_accepted INTEGER DEFAULT 0
+      );
+    """;
+  }
+
+  static String _createOtpCodesTable() {
+    return """
+      CREATE TABLE otp_codes(
+        email TEXT PRIMARY KEY,
+        code TEXT,
+        expires_at INTEGER
       );
     """;
   }
