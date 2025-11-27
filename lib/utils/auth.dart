@@ -114,7 +114,7 @@ class Auth {
   static Future<void> updatePasswordByEmail(String email, String newPassword, Database database) async {
     final HashString hash = createHashString(newPassword);
 
-    await database.update('users', {'password_hash': hash.hashValue, 'salt': hash.salt}, where: 'email=?', whereArgs: [email]);
+    await database.update('carer', {'password_hash': hash.hashValue, 'salt': hash.salt}, where: 'email=?', whereArgs: [email]);
     await database.delete('otp_codes', where: 'email=?', whereArgs: [email]);
   }
 }
