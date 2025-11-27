@@ -3,13 +3,13 @@
 
 import 'dart:async';
 
-import 'package:crypto/crypto.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/carer_to_user.dart';
 import 'package:prototype_project/models/user.dart';
+import 'package:prototype_project/utils/auth.dart';
 
 class Carer {
   final int id;

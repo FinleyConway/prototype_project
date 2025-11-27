@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_project/components/button.dart';
 import 'package:prototype_project/components/text_field.dart';
+import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/pages/home_page.dart';
 import 'package:prototype_project/pages/login/forgot_password_email.dart';
 import 'package:prototype_project/pages/login/signup.dart';
@@ -17,9 +18,10 @@ if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop 
 /// Sign-in screen: accepts either username or email + password
 /// and validates against stored salted+hashed credentials.
 class LoginScreen extends StatefulWidget {
+  final User currentUser; // prototype temp
   final Database database;
 
-  const LoginScreen({super.key, required this.database});
+  const LoginScreen({super.key, required this.database, required this.currentUser});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -99,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const HomePage()),
+                        MaterialPageRoute(builder: (context) => HomePage(database: widget.database, currentUser: widget.currentUser)),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
