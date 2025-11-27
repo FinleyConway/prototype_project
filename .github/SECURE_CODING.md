@@ -63,4 +63,4 @@ _Last updated: November 2025_
 ## Summary
 
 These secure coding standards support safer backend development and consistent practices across the project.  
-They complement (but do not repeat) the broader guidelines in `SECURITY.md`.
+They complement (but do not repeat) the broader guidelines in .github/SECURITY.md
