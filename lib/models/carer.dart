@@ -3,9 +3,9 @@
 
 import 'dart:async';
 
-import 'package:prototype_project/utils/auth.dart';
+import 'package:crypto/crypto.dart';
 
-import 'package:sqflite/sqflite.dart'
+import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 import 'package:prototype_project/models/carer_to_user.dart';
