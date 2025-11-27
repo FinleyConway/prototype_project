@@ -65,6 +65,13 @@ class Auth {
     Carer? carer;
 
     carer = await Carer.getByEmail(credentials, database);
+
+    if (carer != null) {
+      if (validateHashString(carer.password, carer.salt, password)) {
+        return carer;
+      }
+    }
+
     carer = await Carer.getByUsername(credentials, database);
 
     if (carer != null) {
