@@ -1,7 +1,7 @@
 # Secure Coding Practices
 
 This document provides practical coding standards for the development team.  
-It focuses only on **how code should be written**, avoiding duplication with the main SECURITY.md policy.
+It focuses only on **how code should be written**
 
 _Last updated: November 2025_
 
