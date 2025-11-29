@@ -35,6 +35,7 @@ class UserEvent {
         "repeat_type" : event.repeatType.index,
         "reminder_time_unix" : _getUnixTime(event.reminderTime),
         "notes" : event.notes,
+        "completed" : event.completed ? 1 : 0,
         "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
       },
     );
@@ -42,14 +43,40 @@ class UserEvent {
     return UserEvent(id: id, userId: userId, event: event, eventDetails: eventDetails);
   }
 
+  static Future<UserEvent> update(int id, int userId, Event event, Database database, [Map<String, dynamic>? eventDetails]) async {
+    await database.update(
+      "user_event",
+      {
+        "user_id" : userId,
+        "title" : event.title,
+        "location" : event.location,
+        "event_type" : event.eventType.index,
+        "repeat_type" : event.repeatType.index,
+        "reminder_time_unix" : _getUnixTime(event.reminderTime),
+        "notes" : event.notes,
+        "completed" : event.completed ? 1 : 0,
+        "event_detail_json" : eventDetails != null ? jsonEncode(eventDetails) : null
+      },
+      where: "id = ?",
+      whereArgs: [id]
+    );
+
+    return UserEvent(id: id, userId: userId, event: event, eventDetails: eventDetails);
+  } 
+
   // Get the User Event entity from user id.
-  static Future<List<UserEvent>> getByUserId(int userId, Database database, [DateTime? date]) async {
+  static Future<List<UserEvent>> getByUserId(int userId, Database database, {DateTime? date, EventType? reminderType}) async {
     String where = "user_id = ?";
     List<dynamic> whereArgs = [userId];
 
     if (date != null) {
       where += " AND reminder_time_unix = ?";
       whereArgs.add(_getUnixTime(date));
+    }
+
+    if (reminderType != null) {
+      where += " AND event_type = ?";
+      whereArgs.add(reminderType.index);
     }
 
     final result = await database.query(
@@ -84,6 +111,7 @@ class UserEvent {
         repeatType: EventRepeatType.values[map["repeat_type"] as int],
         reminderTime: _getDateFromUnix(map["reminder_time_unix"] as int),
         notes: map["notes"] as String,
+        completed: (map["completed"] as int) == 1,
       ),
       eventDetails: _parseJson(map["event_detail_json"]),
     );
