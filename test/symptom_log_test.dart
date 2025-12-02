@@ -12,12 +12,18 @@ Future<void> testCreatingSymptomLog() async {
   final Database db = await CarerDb.create();
   
   final User user = await User.create("Finley", db);
-  final SymptomLog newSymptomLog = await user.assignSymptomLog(
-    Symptom.memoryLoss,
-    "sadasdasdasdasdasd",
-    DateTime(2025, 11, 7), 
-    db
+
+  final Log log = Log(
+    symptomType: SymptomType.symptom1,
+    symptomSeverity: 10,
+    moodType: MoodType.mood1,
+    trigger: "asd",
+    responseTaken: "123",
+    categoryType: CategoryType.category1,
+    notes: "123"
   );
+
+  final SymptomLog newSymptomLog = await user.assignSymptomLog(log, DateTime(2025, 11, 7), db);
 
   final List<SymptomLog> allSymptomLogs = await user.getAllLoggedSymptoms(SymptomOrder.ascend, SymptomSortBy.date, db);
 
@@ -30,18 +36,19 @@ Future<void> testQuerySymptomLogTime() async {
   final Database db = await CarerDb.create();
   
   final User user = await User.create("Finley", db);
-  final SymptomLog newSymptomLog = await user.assignSymptomLog(
-    Symptom.memoryLoss,
-    "sadasdasdasdasdasd",
-    DateTime(2025, 11, 7), 
-    db
+
+  final Log log = Log(
+    symptomType: SymptomType.symptom1,
+    symptomSeverity: 10,
+    moodType: MoodType.mood1,
+    trigger: "asd",
+    responseTaken: "123",
+    categoryType: CategoryType.category1,
+    notes: "123"
   );
-  final SymptomLog newSymptomLog1 = await user.assignSymptomLog(
-    Symptom.memoryLoss,
-    "sadasdasdasdasdasd",
-    DateTime(2026, 11, 7), 
-    db
-  );
+
+  final SymptomLog newSymptomLog = await user.assignSymptomLog(log, DateTime(2025, 11, 7), db);
+  final SymptomLog newSymptomLog1 = await user.assignSymptomLog(log, DateTime(2026, 11, 7), db);
 
   final List<SymptomLog> allSymptomLogs = await user.getAllLoggedSymptoms(SymptomOrder.ascend, SymptomSortBy.date, db);
 
@@ -60,28 +67,39 @@ Future<void> testQuerySymptomLogSymptom() async {
   final Database db = await CarerDb.create();
   
   final User user = await User.create("Finley", db);
-  final SymptomLog newSymptomLog = await user.assignSymptomLog(
-    Symptom.memoryLoss,
-    "sadasdasdasdasdasd",
-    DateTime(2025, 11, 7), 
-    db
+
+  final Log log1 = Log(
+    symptomType: SymptomType.symptom1,
+    symptomSeverity: 10,
+    moodType: MoodType.mood1,
+    trigger: "asd",
+    responseTaken: "123",
+    categoryType: CategoryType.category1,
+    notes: "123"
   );
-  final SymptomLog newSymptomLog1 = await user.assignSymptomLog(
-    Symptom.moodChanges,
-    "sadasdasdasdasdasd",
-    DateTime(2026, 11, 7), 
-    db
+
+  final Log log2 = Log(
+    symptomType: SymptomType.symptom2,
+    symptomSeverity: 10,
+    moodType: MoodType.mood1,
+    trigger: "asd",
+    responseTaken: "123",
+    categoryType: CategoryType.category1,
+    notes: "123"
   );
+
+  final SymptomLog newSymptomLog = await user.assignSymptomLog(log1, DateTime(2025, 11, 7), db);
+  final SymptomLog newSymptomLog1 = await user.assignSymptomLog(log2, DateTime(2026, 11, 7), db);
 
   final List<SymptomLog> allSymptomLogs = await user.getAllLoggedSymptoms(SymptomOrder.ascend, SymptomSortBy.symptomType, db);
 
-  expect(allSymptomLogs[1], newSymptomLog);
-  expect(allSymptomLogs[0], newSymptomLog1);
+  expect(allSymptomLogs[1], newSymptomLog1);
+  expect(allSymptomLogs[0], newSymptomLog);
 
   final List<SymptomLog> allSymptomLogs1 = await user.getAllLoggedSymptoms(SymptomOrder.descend, SymptomSortBy.symptomType, db);
 
-  expect(allSymptomLogs1[0], newSymptomLog);
-  expect(allSymptomLogs1[1], newSymptomLog1);
+  expect(allSymptomLogs1[0], newSymptomLog1);
+  expect(allSymptomLogs1[1], newSymptomLog);
 
   await db.close();
 }

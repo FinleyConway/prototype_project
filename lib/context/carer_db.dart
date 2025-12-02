@@ -95,6 +95,11 @@ class CarerDb {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         symptom_type INTEGER,
+        symptom_severity INTEGER,
+        mood_type INTEGER,
+        trigger TEXT,
+        response_taken TEXT,
+        category_type INTEGER,
         notes TEXT,
         timestamp_unix INTEGER,
         FOREIGN KEY (user_id) REFERENCES user(id)
