@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_project/models/carer.dart';
 
 import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/pages/calendar_page.dart';
 import 'package:prototype_project/pages/health_log.dart';
 import 'package:prototype_project/pages/reminder_page.dart';
+import 'package:prototype_project/pages/profile_page.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class HomePage extends StatefulWidget  {
+  final Carer loggedCarer;
   final User currentUser;
   final Database database;
 
-  const HomePage({super.key, required this.database, required this.currentUser}); // temp user paramater
+  const HomePage({super.key, required this.database, required this.currentUser, required this.loggedCarer}); // temp user paramater
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -32,14 +35,14 @@ class _HomePageState extends State<HomePage> {
         // Navigate to Calendar
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 1:
         // Navigate to Health Log
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 2:
@@ -49,7 +52,7 @@ class _HomePageState extends State<HomePage> {
         // Navigate to Reminder
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 4:
@@ -73,10 +76,24 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, color: Colors.teal[700], size: 20),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                      database: widget.database,
+                      currentUser: widget.currentUser,
+                      loggedCarer: widget.loggedCarer
+                    ),
+                  ),
+                );
+              },
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, color: Colors.teal[700], size: 20),
+              ),
             ),
           ),
         ],

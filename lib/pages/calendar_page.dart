@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_project/models/carer.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -13,10 +14,11 @@ import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class MyCalendarPage extends StatefulWidget {
+  final Carer loggedCarer;
   final User currentUser;
   final Database database;
 
-  const MyCalendarPage({super.key, required this.database, required this.currentUser});
+  const MyCalendarPage({super.key, required this.database, required this.currentUser, required this.loggedCarer});
 
   @override
   State<MyCalendarPage> createState() => _MyCalendarPageState();
@@ -51,7 +53,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
         // Navigate to Health Log
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 2:
@@ -62,7 +64,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
         // Navigate to Reminder
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 4:
