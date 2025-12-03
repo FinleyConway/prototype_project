@@ -4,6 +4,7 @@ import 'package:prototype_project/models/user.dart';
 import 'package:prototype_project/pages/calendar_page.dart';
 import 'package:prototype_project/pages/health_log.dart';
 import 'package:prototype_project/pages/reminder_page.dart';
+import 'package:prototype_project/pages/profile_page.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
@@ -73,10 +74,23 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, color: Colors.teal[700], size: 20),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                      database: widget.database,
+                      currentUser: widget.currentUser,
+                    ),
+                  ),
+                );
+              },
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, color: Colors.teal[700], size: 20),
+              ),
             ),
           ),
         ],
