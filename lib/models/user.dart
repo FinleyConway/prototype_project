@@ -72,8 +72,8 @@ class User {
     return SymptomLog.getAll(id, order, sort, database);
   }
 
-  Future<SymptomLog> assignSymptomLog(Symptom symptom, String notes, DateTime timestamp, Database database) {
-    return SymptomLog.create(id, symptom, notes, timestamp, database);
+  Future<SymptomLog> assignSymptomLog(Log log, DateTime timestamp, Database database) {
+    return SymptomLog.create(id, log, timestamp, database);
   }
 
   Future<Contact> assignContact(String name, String relation, String phoneNumber, String secondaryPhoneNumber, String notes, Database database) {
