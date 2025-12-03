@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_project/models/carer.dart';
 import 'package:prototype_project/models/user.dart';
 
 import 'package:prototype_project/pages/calendar_page.dart';
@@ -8,10 +9,11 @@ import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class HealthLogPage extends StatefulWidget {
+  final Carer loggedCarer;
   final User currentUser;
   final Database database;
 
-  const HealthLogPage({super.key, required this.currentUser, required this.database});
+  const HealthLogPage({super.key, required this.currentUser, required this.database, required this.loggedCarer});
   
   @override
   State<HealthLogPage> createState() => _HealthLogPageState();
@@ -31,7 +33,7 @@ class _HealthLogPageState extends State<HealthLogPage> {
         // Navigate to Calendar
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 1:
@@ -41,7 +43,7 @@ class _HealthLogPageState extends State<HealthLogPage> {
         // Navigate back to Home
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => HomePage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
       case 3:
         // Navigate to Social, TODO

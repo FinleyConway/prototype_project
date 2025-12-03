@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:prototype_project/models/carer.dart';
 
 import 'package:prototype_project/models/event.dart';
 import 'package:prototype_project/models/user.dart';
@@ -12,13 +13,15 @@ import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
 
 class MyReminderPage extends StatefulWidget {
+  final Carer loggedCarer;
   final User currentUser;
   final Database database;
 
   const MyReminderPage({
     super.key,
     required this.database,
-    required this.currentUser,
+    required this.currentUser, 
+    required this.loggedCarer,
   });
 
   @override
@@ -62,14 +65,14 @@ class _MyReminderPageState extends State<MyReminderPage> with TickerProviderStat
         // Navigate tn Calendar 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 1:
         // Navigate to Health Log
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
+          MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
         );
         break;
       case 2:

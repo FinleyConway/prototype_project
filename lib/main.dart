@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:prototype_project/models/carer.dart';
 import 'package:window_size/window_size.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -36,6 +37,7 @@ void main() async {
   // -- temp --
   // creates a temp person with dementia 
   User user = await User.create("PeterPrototype", database); // need a way of creating of globally creating a user and selecting a user
+  await Carer.create("finley", "finley@gmail.com", "finley", "1234", false, database);
   // -- temp --
 
   runApp(MyApp(database: database, user: user));

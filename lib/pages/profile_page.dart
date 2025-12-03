@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_project/models/carer.dart';
 
 import 'package:prototype_project/models/user.dart';
 
 import 'package:prototype_project/pages/calendar_page.dart';
 import 'package:prototype_project/pages/health_log.dart';
 import 'package:prototype_project/pages/reminder_page.dart';
+import 'package:prototype_project/utils/auth.dart';
 
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
@@ -12,9 +14,11 @@ if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop 
 
 
 class ProfilePage extends StatefulWidget {
+  final Carer loggedCarer;
   final User currentUser;
   final Database database;
-  const ProfilePage({super.key, required this.database, required this.currentUser});
+
+  const ProfilePage({super.key, required this.database, required this.currentUser, required this.loggedCarer});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -35,14 +39,14 @@ class _ProfilePageState extends State<ProfilePage> {
       // Navigate to Calendar
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser)),
+        MaterialPageRoute(builder: (context) => MyCalendarPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
       );
       break;
     case 1:
       // Navigate to Health Log
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser)),
+        MaterialPageRoute(builder: (context) => HealthLogPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
       );
       break;
     case 2:
@@ -53,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // Navigate to Reminder
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser)),
+        MaterialPageRoute(builder: (context) => MyReminderPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
       );
       break;
     case 4:
@@ -64,12 +68,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   
   // sample profile data - import from DB, probably will need an appropriate method for securely handling sensitive info
-  final String _userName = 'Jane Doe';
-  final String _userRole = 'Carepanion';
   final String _phoneNumber = '+44 7604304326';
-  final String _email = 'janedoe@example.com';
   final String _address = '14 Church Street, Newcastle, KN4 6BP';
-  final String _password = 'MyPassword123!';
   final List<String> _careRecipients = ['Mark', 'Susie', 'Alice'];
   final String _emergencyContact = '+44 4869472354';
 
@@ -115,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildInfoCard(
                 icon: Icons.email,
                 label: 'Email',
-                value: _email,
+                value: widget.loggedCarer.email,
               ),
               _buildInfoCard(
                 icon: Icons.home,
@@ -123,7 +123,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 value: _address,
                 iconColor: const Color(0xFF4CAF50),
               ),
-              _buildPasswordCard(),
               _buildInfoCard(
                 icon: Icons.people,
                 label: 'Care Recipients',
@@ -166,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         const SizedBox(height: 12),
         Text(
-          _userName,
+          widget.loggedCarer.name,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -175,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         const SizedBox(height: 4),
         Text(
-          _userRole,
+          "Carepanion",
           style: TextStyle(
             fontSize: 14,
             color: Colors.grey[600],
@@ -234,60 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildPasswordCard() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8F5E9),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.lock,
-            size: 24,
-            color: Colors.grey[700],
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Password',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _isPasswordVisible ? _password : '**********',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF2D2D2D),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey[700],
-            ),
-            onPressed: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
+
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
