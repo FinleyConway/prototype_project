@@ -6,6 +6,8 @@ import 'package:prototype_project/pages/calendar_page.dart';
 import 'package:prototype_project/pages/health_log.dart';
 import 'package:prototype_project/pages/reminder_page.dart';
 import 'package:prototype_project/pages/profile_page.dart';
+import 'package:prototype_project/pages/contact_page.dart';
+import 'package:prototype_project/pages/resource_page.dart';
 
 import 'package:sqflite/sqflite.dart' // mobile sqflite
 if (dart.library.ffi) 'package:sqflite_common_ffi/sqflite_ffi.dart'; // desktop sqflite
@@ -65,14 +67,23 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: _buildBottomNavBar(),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.notifications, color: Color(0xFF2C2C2C)),
+          onPressed: () {},
+        ),
         title: const Text(
           'Carepanion',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Color(0xFF81A894),
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
@@ -89,83 +100,124 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-              child: CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, color: Colors.teal[700], size: 20),
+              child: const Icon(
+                Icons.account_circle,
+                color: Color(0xFF81A894),
+                size: 32,
               ),
             ),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildInfoCardsSection(),
-            const SizedBox(height: 20),
-            _buildGridTilesSection(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Today at a glance',
+                style: TextStyle(
+                  color: Color(0xFF81A894),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8DCC4),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    _buildTodayItem(
+                      icon: Icons.description,
+                      iconBgColor: const Color(0xFFB8D4C4),
+                      text: '3:30 PM Appointment with\nDr. ABC at 123 Hospital',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTodayItem(
+                      icon: Icons.medication,
+                      iconBgColor: const Color(0xFFD4E8D4),
+                      text: '10AM 1 x 5ml Donepezil\nafter breakfast',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTodayItem(
+                      icon: Icons.access_time,
+                      iconBgColor: const Color(0xFFB8D4C4),
+                      text: '12PM Walk the dog',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildSection(
+                icon: Icons.people,
+                iconBgColor: const Color(0xFF81A894),
+                title: 'Helpful Resources',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute( builder: (context) => ResourcesPage(database: widget.database, currentUser: widget.currentUser, loggedCarer: widget.loggedCarer)),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              _buildSection(
+                icon: Icons.warning,
+                iconBgColor: const Color(0xFF81A894),
+                title: 'Emergency Contacts',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute( builder: (context) => MyContactPage(database: widget.database, currentUser: widget.currentUser)),
+                  );
+                },
+              ),
+              const SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildInfoCardsSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.brown[100],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          _buildInfoCard(
-            icon: Icons.access_time,
-            title: 'Next Appointment',
-            color: Colors.blue[100]!,
-            iconColor: Colors.blue[700]!,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoCard(
-            icon: Icons.error_outline,
-            title: 'Medication Reminder',
-            color: Colors.green[100]!,
-            iconColor: Colors.green[700]!,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoCard(
-            icon: Icons.notes,
-            title: 'Latest Notes',
-            color: Colors.purple[100]!,
-            iconColor: Colors.purple[700]!,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard({
+  Widget _buildTodayItem({
     required IconData icon,
-    required String title,
-    required Color color,
-    required Color iconColor,
+    required Color iconBgColor,
+    required String text,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
+        color: iconBgColor,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(icon, color: iconColor, size: 28),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF2C2C2C),
+              size: 24,
+            ),
+          ),
           const SizedBox(width: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Color(0xFF2C2C2C),
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -173,30 +225,47 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildGridTilesSection() {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      children: [
-        _buildGridTile(Icons.calendar_today, Colors.teal[400]!),
-        _buildGridTile(Icons.check, Colors.teal[700]!),
-        _buildGridTile(Icons.access_time, Colors.teal[400]!),
-        _buildGridTile(Icons.warning, Colors.teal[700]!),
-      ],
-    );
-  }
-
-  Widget _buildGridTile(IconData icon, Color iconColor) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.brown[100],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: Icon(icon, color: iconColor, size: 48),
+  Widget _buildSection({
+    required IconData icon,
+    required Color iconBgColor,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE8DCC4),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Color(0xFF2C2C2C),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
